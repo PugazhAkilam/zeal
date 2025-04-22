@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, AppBar, Toolbar, IconButton, Typography, Drawer, List, ListItem, ListItemIcon, ListItemText, useTheme, useMediaQuery } from '@mui/material';
+import { Box, AppBar, Toolbar, IconButton, Typography, ListItemButton,Drawer, List, ListItem, ListItemIcon, ListItemText, useTheme, useMediaQuery, Menu, MenuItem, Avatar, Switch } from '@mui/material';
 import Footer from '../Footer';
 import MenuIcon from '@mui/icons-material/Menu';
 import FlightIcon from '@mui/icons-material/Flight';
@@ -7,16 +7,23 @@ import HotelIcon from '@mui/icons-material/Hotel';
 import LuggageIcon from '@mui/icons-material/Luggage';
 import VisaIcon from '@mui/icons-material/DocumentScanner';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import EmailIcon from '@mui/icons-material/Email';
+import ChatIcon from '@mui/icons-material/Chat';
 import { Outlet, useNavigate, useLocation, Navigate } from 'react-router-dom';
-
+import  logo from '../../assets/logot.png';
 const drawerWidth = 240;
 
 const AdminLayout = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
   const location = useLocation();
+
+  const handleDarkModeToggle = () => setDarkMode(!darkMode);
 
   const menuItems = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/admin' },
@@ -32,22 +39,43 @@ const AdminLayout = () => {
 
   const drawer = (
     <Box>
-      <List>
-        {menuItems.map((item) => (
-          <ListItem
-            button
-            key={item.text}
-            onClick={() => {
-              navigate(item.path);
-              if (isMobile) setMobileOpen(false);
-            }}
-            selected={location.pathname === item.path}
-          >
-            <ListItemIcon>{item.icon}</ListItemIcon>
-            <ListItemText primary={item.text} />
-          </ListItem>
-        ))}
-      </List>
+      <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1,bgcolor:"GrayText" }}>
+        <img src={logo} alt="ZEAL Logo" style={{ width: 34, height: 33 }} />
+        <Typography variant="h6" sx={{ fontWeight: 'bold' ,color:"white"}}>
+          ZEAL Travels
+        </Typography>
+      </Box>
+      <List sx={{ p: 0, m: 0 }}>
+  {menuItems.map((item) => (
+    <ListItem key={item.text} disablePadding sx={{ mt: 0,}}>
+      <ListItemButton
+        onClick={() => {
+          navigate(item.path);
+          if (isMobile) setMobileOpen(false);
+        }}
+        selected={location.pathname === item.path}
+        sx={{
+            mt: 0,
+          '&.Mui-selected': {
+            backgroundColor: '#1976d2',
+            color: '#fff',
+           
+            '& .MuiListItemIcon-root': {
+              color: '#fff',
+            },
+          },
+          '&.Mui-selected:hover': {
+            backgroundColor: '#1565c0',
+          },
+        }}
+      >
+        <ListItemIcon>{item.icon}</ListItemIcon>
+        <ListItemText primary={item.text} />
+      </ListItemButton>
+    </ListItem>
+  ))}
+</List>
+
     </Box>
   );
 
@@ -71,9 +99,21 @@ const AdminLayout = () => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mr: 2 }}>
+          
+          </Box>
+          <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
             Admin Dashboard - {location.pathname.split('/').pop().charAt(0).toUpperCase() + location.pathname.split('/').pop().slice(1)}
           </Typography>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <Switch checked={darkMode} onChange={handleDarkModeToggle} color="default" />
+            <IconButton color="inherit">
+              <NotificationsIcon />
+            </IconButton>
+            <IconButton color="inherit">
+              <Avatar sx={{ width: 32, height: 32 }}>A</Avatar>
+            </IconButton>
+          </Box>
         </Toolbar>
       </AppBar>
 
