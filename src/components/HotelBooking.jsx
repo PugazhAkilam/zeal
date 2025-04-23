@@ -3,7 +3,7 @@ import { Box, Typography, Grid, TextField, Button, FormControl, InputLabel, Sele
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { formStyles } from '../theme/flightFormTheme';
+
 
 // Country and city data
 const countryData = {
@@ -43,8 +43,8 @@ function HotelBooking() {
   }, [selectedCountry, bookingType]);
 
   return (
-    <Box sx={formStyles.mainContainer}>
-      <Box sx={formStyles.formContainer}>
+    <Box >
+      <Box >
         <Typography variant="h6" gutterBottom>
           Hotel Booking Form
         </Typography>
@@ -53,7 +53,7 @@ function HotelBooking() {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth margin="normal">
-              <InputLabel sx={formStyles.whiteLabel}>Booking Type</InputLabel>
+              <InputLabel >Booking Type</InputLabel>
               <Select
                 value={bookingType}
                 onChange={(e) => {
@@ -64,7 +64,7 @@ function HotelBooking() {
                   }
                 }}
                 label="Booking Type"
-                sx={formStyles.inputField}
+              
               >
                 <MenuItem value="Domestic">Domestic</MenuItem>
                 <MenuItem value="International">International</MenuItem>
@@ -76,12 +76,12 @@ function HotelBooking() {
           {bookingType === 'International' && (
             <Grid item xs={12} sm={6}>
               <FormControl fullWidth margin="normal">
-                <InputLabel sx={formStyles.whiteLabel}>Country</InputLabel>
+                <InputLabel >Country</InputLabel>
                 <Select
                   value={selectedCountry}
                   onChange={(e) => setSelectedCountry(e.target.value)}
                   label="Country"
-                  sx={formStyles.inputField}
+                
                 >
                   {Object.keys(countryData).map((country) => (
                     <MenuItem key={country} value={country}>{country}</MenuItem>
@@ -94,12 +94,12 @@ function HotelBooking() {
           {/* City */}
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth margin="normal">
-              <InputLabel sx={formStyles.whiteLabel}>City</InputLabel>
+              <InputLabel >City</InputLabel>
               <Select
                 value={selectedCity}
                 onChange={(e) => setSelectedCity(e.target.value)}
                 label="City"
-                sx={formStyles.inputField}
+                
                 disabled={bookingType === 'International' && !selectedCountry}
               >
                 {cityOptions.map((city) => (
@@ -122,7 +122,7 @@ function HotelBooking() {
                   textField: {
                     fullWidth: true,
                     margin: 'normal',
-                    sx: formStyles.datePickerStyle,
+                   
                   },
                 }}
               />
@@ -136,7 +136,7 @@ function HotelBooking() {
                   textField: {
                     fullWidth: true,
                     margin: 'normal',
-                    sx: formStyles.datePickerStyle,
+                 
                   },
                 }}
               />
@@ -151,16 +151,16 @@ function HotelBooking() {
               fullWidth
               label="Hotel Name"
               margin="normal"
-              sx={formStyles.inputField}
+            
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth margin="normal">
-              <InputLabel sx={formStyles.whiteLabel}>Hotel Star Rating</InputLabel>
+              <InputLabel >Hotel Star Rating</InputLabel>
               <Select
                 defaultValue="5"
                 label="Hotel Star Rating"
-                sx={formStyles.inputField}
+            
               >
                 <MenuItem value="3">3 Star</MenuItem>
                 <MenuItem value="4">4 Star</MenuItem>
@@ -182,7 +182,7 @@ function HotelBooking() {
                 label={label}
                 defaultValue={label === 'Adults' ? '1' : '0'}
                 margin="normal"
-                sx={formStyles.inputField}
+            
               />
             </Grid>
           ))}
@@ -196,7 +196,7 @@ function HotelBooking() {
               label="Age of Children (comma-separated)"
               placeholder="e.g. 5, 9"
               margin="normal"
-              sx={formStyles.inputField}
+        
             />
           </Grid>
           <Grid item xs={12}>
@@ -205,7 +205,7 @@ function HotelBooking() {
               label="Budget Range (in USD)"
               placeholder="e.g. 500-1000"
               margin="normal"
-              sx={formStyles.inputField}
+             
             />
           </Grid>
         </Grid>
@@ -214,11 +214,11 @@ function HotelBooking() {
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth margin="normal">
-              <InputLabel sx={formStyles.whiteLabel}>Meal Plan</InputLabel>
+              <InputLabel >Meal Plan</InputLabel>
               <Select
                 defaultValue="EP"
                 label="Meal Plan"
-                sx={formStyles.inputField}
+               
               >
                 <MenuItem value="EP">EP (Room Only)</MenuItem>
                 <MenuItem value="CP">CP (Breakfast)</MenuItem>
@@ -229,11 +229,11 @@ function HotelBooking() {
           </Grid>
           <Grid item xs={12} sm={6}>
             <FormControl fullWidth margin="normal">
-              <InputLabel sx={formStyles.whiteLabel}>Booking Status</InputLabel>
+              <InputLabel >Booking Status</InputLabel>
               <Select
                 defaultValue="Pending"
                 label="Booking Status"
-                sx={formStyles.inputField}
+
               >
                 <MenuItem value="Pending">Pending</MenuItem>
                 <MenuItem value="Confirmed">Confirmed</MenuItem>
@@ -251,7 +251,7 @@ function HotelBooking() {
           multiline
           rows={3}
           margin="normal"
-          sx={formStyles.inputField}
+         
         />
 
         {/* Submit Button */}

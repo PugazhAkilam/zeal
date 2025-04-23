@@ -10,6 +10,7 @@ import AdminLayout from './components/admin/AdminLayout';
 import SuperAdminLayout from './components/superadmin/SuperAdminLayout';
 import AnchorLayout from './components/anchor/AnchorLayout';
 import WelcomeDashboard from './components/admin/WelcomeDashboard';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="hotel" element={<HotelBooking />} />
           <Route path="travel" element={<TravelPackage />} />
           <Route path="visa" element={<VisaPocess />} />
+          <Route path="profile" element={<ProfilePage />} />
         </Route>
 
         {/* Super Admin Routes */}

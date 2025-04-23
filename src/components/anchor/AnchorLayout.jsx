@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, AppBar, Toolbar, IconButton, Typography, Drawer, List, ListItem, ListItemIcon, ListItemText, useTheme, useMediaQuery } from '@mui/material';
-import Footer from '../Footer';
+import Footer from '../../pages/Footer';
 import MenuIcon from '@mui/icons-material/Menu';
 import FlightIcon from '@mui/icons-material/Flight';
 import HotelIcon from '@mui/icons-material/Hotel';

@@ -3,7 +3,7 @@ import { Grid } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { formStyles } from '../../theme/flightFormTheme';
+
 
 const DateSection = ({
   tripType,
@@ -23,7 +23,7 @@ const DateSection = ({
       textField: {
         fullWidth: true,
         margin: 'normal',
-        sx: formStyles.datePickerStyle,
+        
       },
     },
   };

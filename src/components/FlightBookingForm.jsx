@@ -3,7 +3,7 @@ import { Box, Button, Typography, Grid, TextField } from '@mui/material';
 import TripTypeSection from './FormSections/TripTypeSection';
 import DateSection from './FormSections/DateSection';
 import PassengerSection from './FormSections/PassengerSection';
-import { formStyles } from '../theme/flightFormTheme';
+
 
 const FlightBookingForm = () => {
   const [tripType, setTripType] = useState('Single');
@@ -14,8 +14,8 @@ const FlightBookingForm = () => {
   const [segment3Date, setSegment3Date] = useState(null);
 
   return (
-    <Box sx={formStyles.mainContainer}>
-      <Box sx={formStyles.formContainer}>
+    <Box >
+      <Box >
         <Typography variant="h6" gutterBottom>
           Flight Booking Form
         </Typography>
@@ -47,7 +47,7 @@ const FlightBookingForm = () => {
           margin="normal"
           sx={{
             width: { xs: '100%', md: '815px' },
-            ...formStyles.inputField,
+       
           }}
         />
 

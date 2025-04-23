@@ -1,6 +1,6 @@
 import React from 'react';
 import { Grid, TextField, FormControl, InputLabel, Select, MenuItem, Typography } from '@mui/material';
-import { formStyles } from '../../theme/flightFormTheme';
+
 
 const PassengerSection = () => {
   return (
@@ -35,7 +35,7 @@ const PassengerSection = () => {
             margin="normal"
             sx={{
               width: "260px",
-              ...formStyles.inputField,
+
             }}
           />
         </Grid>
@@ -47,17 +47,17 @@ const PassengerSection = () => {
             margin="normal"
             sx={{
               width: "260px",
-              ...formStyles.inputField,
+            
             }}
           />
         </Grid>
         <Grid item xs={4}>
           <FormControl fullWidth margin="normal" sx={{ width: "260px" }}>
-            <InputLabel sx={formStyles.whiteLabel}>Booking Status</InputLabel>
+            <InputLabel >Booking Status</InputLabel>
             <Select
               defaultValue="Pending"
               label="Booking Status"
-              sx={formStyles.inputField}
+            
             >
               <MenuItem value="Pending">Pending</MenuItem>
               <MenuItem value="Confirmed">Confirmed</MenuItem>

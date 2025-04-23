@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, AppBar, Toolbar, IconButton, Typography, ListItemButton,Drawer, List, ListItem, ListItemIcon, ListItemText, useTheme, useMediaQuery, Menu, MenuItem, Avatar, Switch } from '@mui/material';
-import Footer from '../Footer';
+import Footer from '../../pages/Footer';
 import MenuIcon from '@mui/icons-material/Menu';
 import FlightIcon from '@mui/icons-material/Flight';
 import HotelIcon from '@mui/icons-material/Hotel';
@@ -13,17 +13,19 @@ import EmailIcon from '@mui/icons-material/Email';
 import ChatIcon from '@mui/icons-material/Chat';
 import { Outlet, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import  logo from '../../assets/logot.png';
+import { DarkModeSwitch } from 'react-toggle-dark-mode';
+
 const drawerWidth = 240;
 
 const AdminLayout = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleDarkModeToggle = () => setDarkMode(!darkMode);
+
 
   const menuItems = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/admin' },
@@ -36,6 +38,20 @@ const AdminLayout = () => {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
+  const [isDarkMode, setDarkMode] = useState(() => {
+    // Save preference to localStorage
+    const saved = localStorage.getItem('theme');
+    return saved ? saved === 'dark' : false;
+  });
+
+  const toggleDarkMode = (checked) => {
+    setDarkMode(checked);
+    localStorage.setItem('theme', checked ? 'dark' : 'light');
+  };
+
+  useEffect(() => {
+    document.body.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+  }, [isDarkMode]);
 
   const drawer = (
     <Box>
@@ -80,6 +96,7 @@ const AdminLayout = () => {
   );
 
   return (
+    <>
     <Box sx={{ display: 'flex' }}>
       <AppBar
         position="fixed"
@@ -106,12 +123,18 @@ const AdminLayout = () => {
             Admin Dashboard - {location.pathname.split('/').pop().charAt(0).toUpperCase() + location.pathname.split('/').pop().slice(1)}
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Switch checked={darkMode} onChange={handleDarkModeToggle} color="default" />
+          <DarkModeSwitch
+        checked={isDarkMode}
+        onChange={toggleDarkMode}
+        size={30}
+        sunColor="orange"
+        moonColor="black"
+      />
             <IconButton color="inherit">
               <NotificationsIcon />
             </IconButton>
             <IconButton color="inherit">
-              <Avatar sx={{ width: 32, height: 32 }}>A</Avatar>
+              <Avatar sx={{ width: 32, height: 32 }} onClick={()=>navigate('/admin/profile')}>A</Avatar>
             </IconButton>
           </Box>
         </Toolbar>
@@ -154,15 +177,15 @@ const AdminLayout = () => {
           mt: 8,
           display: 'flex',
           flexDirection: 'column',
-          minHeight: '100vh',
+          minHeight: '80vh',
         }}
       >
         <Box sx={{ flex: 1 }}>
           <Outlet />
         </Box>
-        <Footer />
+       
       </Box>
-    </Box>
+    </Box> <Footer /></>
   );
 };
 

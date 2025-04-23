@@ -3,7 +3,7 @@ import { Box, TextField, Button, Typography, Link } from '@mui/material';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { formStyles } from '../theme/flightFormTheme';
+
 import { useNavigate } from 'react-router-dom';
 
 const AuthPage = () => {
@@ -50,13 +50,29 @@ const AuthPage = () => {
   return (
     <> <Button onClick={()=>navigate('/admin')}>admin</Button>   <Button onClick={()=>navigate('/superadmin')}>super admin</Button>   <Button onClick={()=>navigate('/anchor')}>anchor</Button> 
     <Box sx={{
-      ...formStyles.mainContainer,
+        minHeight: '100vh',
+  
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        p: 3,
     
     }}>
       <Box sx={{
-        ...formStyles.formContainer,
-        display: 'flex',
+        
+       
+        width: '100%',
+     
+    p: 4,
+    borderRadius: 4,
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    backdropFilter: 'blur(10px)',
+    // color: '#fff',
+    boxShadow: 5,
         gap: 4,
+        display: 'flex',
         maxWidth: 1200,
       }}>
         <Box sx={{ flex: 1, maxWidth: 500 }}>
@@ -77,7 +93,7 @@ const AuthPage = () => {
                   value={formData.name}
                   onChange={handleChange}
                   margin="normal"
-                  sx={formStyles.inputField}
+               
                 />
                 
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -89,7 +105,7 @@ const AuthPage = () => {
                       textField: {
                         fullWidth: true,
                         margin: 'normal',
-                        sx: formStyles.inputField
+                  
                       }
                     }}
                   />
@@ -103,7 +119,7 @@ const AuthPage = () => {
                   value={formData.mobile}
                   onChange={handleChange}
                   margin="normal"
-                  sx={formStyles.inputField}
+               
                 />
               </>
             )}
@@ -116,7 +132,7 @@ const AuthPage = () => {
               value={formData.email}
               onChange={handleChange}
               margin="normal"
-              sx={formStyles.inputField}
+             
               InputProps={{
                 readOnly: showOTP
               }}
