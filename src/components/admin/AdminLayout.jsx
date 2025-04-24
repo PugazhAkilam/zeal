@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Box, AppBar, Toolbar, IconButton, Typography, ListItemButton,Drawer, List, ListItem, ListItemIcon, ListItemText, useTheme, useMediaQuery, Menu, MenuItem, Avatar, Switch } from '@mui/material';
+import { Box, AppBar, Toolbar, IconButton, Typography, ListItemButton,Drawer, List, ListItem, ListItemIcon, ListItemText, useTheme as useMuiTheme, useMediaQuery, Menu, MenuItem, Avatar, Switch } from '@mui/material';
 import Footer from '../../pages/Footer';
 import MenuIcon from '@mui/icons-material/Menu';
 import FlightIcon from '@mui/icons-material/Flight';
@@ -17,10 +17,12 @@ import { DarkModeSwitch } from 'react-toggle-dark-mode';
 
 const drawerWidth = 240;
 
+import { useTheme } from '../../theme/ThemeContext';
+
 const AdminLayout = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  const theme = useTheme();
+  const { isDarkMode, toggleTheme } = useTheme();
+  const theme = useMuiTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const navigate = useNavigate();
   const location = useLocation();
@@ -38,20 +40,7 @@ const AdminLayout = () => {
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
-  const [isDarkMode, setDarkMode] = useState(() => {
-    // Save preference to localStorage
-    const saved = localStorage.getItem('theme');
-    return saved ? saved === 'dark' : false;
-  });
 
-  const toggleDarkMode = (checked) => {
-    setDarkMode(checked);
-    localStorage.setItem('theme', checked ? 'dark' : 'light');
-  };
-
-  useEffect(() => {
-    document.body.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
-  }, [isDarkMode]);
 
   const drawer = (
     <Box>
@@ -97,6 +86,7 @@ const AdminLayout = () => {
 
   return (
     <>
+    
     <Box sx={{ display: 'flex' }}>
       <AppBar
         position="fixed"
@@ -125,7 +115,7 @@ const AdminLayout = () => {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <DarkModeSwitch
         checked={isDarkMode}
-        onChange={toggleDarkMode}
+        onChange={toggleTheme}
         size={30}
         sunColor="orange"
         moonColor="black"
