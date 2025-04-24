@@ -14,6 +14,8 @@ import {
   Legend,
 } from 'chart.js';
 import { FaShoppingCart, FaBox, FaUsers, FaCog } from 'react-icons/fa';
+import { useAuth } from '../../context/AuthContext';
+import { Navigate } from 'react-router-dom';
 
 ChartJS.register(
   CategoryScale,
@@ -72,17 +74,32 @@ const stats = [
     { icon: <FaCog />, title: 'Settings', value: '11' },
   ];
 const Dashboard = () => {
+  const { user, loading } = useAuth();
+  
+  // Show loading state
+  if (loading) {
+    return <Box sx={{ p: 4 }}>Loading...</Box>;
+  }
+  
+  // Redirect if not authenticated
+  if (!user) {
+    return <Navigate to="/" />;
+  }
+  
+  // Display welcome message with user's name
   return (
-    <Box sx={{ flexGrow: 1, p: 4, }}>
+    <Box sx={{ flexGrow: 1, p: 4 }}>
+      <Typography variant="h4" sx={{ mb: 3 }}>
+        Welcome, {user.name}!
+      </Typography>
       {/* Cards Section */}
       <Grid
       container
       spacing={2}
       sx={{
-
         mb: 3,
-        justifyContent: 'flex-start', // left align
-        flexWrap: 'wrap',             // wrap if screen small
+        justifyContent: 'flex-start',
+        flexWrap: 'wrap',
       }}
     >
       {stats.map((item, idx) => (

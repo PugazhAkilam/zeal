@@ -6,7 +6,12 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import { useNavigate } from 'react-router-dom';
 
+// Add this import
+import { useAuth } from '../context/AuthContext';
+
 const AuthPage = () => {
+  // Add this line
+  const { login } = useAuth();
   const [isLogin, setIsLogin] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -41,12 +46,112 @@ const AuthPage = () => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Handle form submission here
-    console.log(formData);
+  const handleAuthenticate = async () => {
+    try {
+      if (isLogin) {
+        // Log email when Send OTP button is clicked
+        console.log("Send OTP button clicked - Email:", formData.email);
+        
+        // Call API to send OTP
+        const response = await fetch('http://localhost:5000/api/auth/send-otp', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email: formData.email }),
+          credentials: 'include'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          setShowOTP(true);
+          alert('OTP sent to your email');
+        } else {
+          alert(data.message || 'Failed to send OTP');
+        }
+      } else {
+        // Log name, email, dob, mobile when Register button is clicked
+        console.log("Register button clicked - Name:", formData.name);
+        console.log("Register button clicked - Email:", formData.email);
+        console.log("Register button clicked - DOB:", formData.dob);
+        console.log("Register button clicked - Mobile:", formData.mobile);
+        
+        // Call API to register user
+        const response = await fetch('http://localhost:5000/api/auth/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            dob: formData.dob,
+            mobile: formData.mobile
+          }),
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          setShowOTP(true);
+          alert('Registration successful! OTP sent to your email');
+        } else {
+          alert(data.message || 'Registration failed');
+        }
+      }
+    } catch (error) {
+      console.error('Authentication error:', error);
+      alert('An error occurred during authentication');
+    }
   };
-
+  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    try {
+      // Log email and OTP as a string when Login button is clicked
+      console.log("Login button clicked - Email:", formData.email);
+      console.log("Login button clicked - OTP:", formData.otp.join(''));
+      
+      // Call API to verify OTP
+      const response = await fetch('http://localhost:5000/api/auth/verify-otp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          otp: formData.otp.join('')
+        }),
+        // Add credentials to allow cookies to be sent and received
+        credentials: 'include' // Important for cookies
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        // Use the login function from context
+        login(data.user);
+        
+        // Redirect based on user type
+        if (data.user.userType === 3) {
+          navigate('/admin');
+        } else if (data.user.userType === 2) {
+          navigate('/superadmin');
+        } else {
+          navigate('/anchor');
+        }
+        
+        alert('Login successful!');
+      } else {
+        alert(data.message || 'Invalid OTP');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      alert('An error occurred during login');
+    }
+  };
   return (
     <> <Button onClick={()=>navigate('/admin')}>admin</Button>   <Button onClick={()=>navigate('/superadmin')}>super admin</Button>   <Button onClick={()=>navigate('/anchor')}>anchor</Button> 
     <Box sx={{
@@ -142,7 +247,7 @@ const AuthPage = () => {
               <Button
                 variant="contained"
                 fullWidth
-                onClick={() => setShowOTP(true)}
+                onClick={handleAuthenticate}
                 sx={{
                   mt: 3,
                   mb: 2,
