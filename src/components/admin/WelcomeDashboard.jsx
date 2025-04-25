@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Grid, Paper, Typography } from '@mui/material';
 import { Line, Bar } from 'react-chartjs-2';
 import {
@@ -73,83 +73,81 @@ const stats = [
     { icon: <FaUsers />, title: 'Users', value: '30' },
     { icon: <FaCog />, title: 'Settings', value: '11' },
   ];
-const Dashboard = () => {
-  const { user, loading } = useAuth();
-  
-  // Show loading state
-  if (loading) {
-    return <Box sx={{ p: 4 }}>Loading...</Box>;
-  }
-  
-  // Redirect if not authenticated
-  if (!user) {
-    return <Navigate to="/" />;
-  }
-  
-  // Display welcome message with user's name
-  return (
-    <Box sx={{ flexGrow: 1, p: 4 }}>
-      <Typography variant="h4" sx={{ mb: 3 }}>
-        Welcome, {user.name}!
-      </Typography>
-      {/* Cards Section */}
-      <Grid
-      container
-      spacing={2}
-      sx={{
-        mb: 3,
-        justifyContent: 'flex-start',
-        flexWrap: 'wrap',
-      }}
-    >
-      {stats.map((item, idx) => (
+  const WelcomeDashboard = () => {
+    const { user, loading, error, isAuthenticated } = useAuth();
+    
+    if (loading) {
+      return <Box sx={{ p: 4 }}>Loading...</Box>;
+    }
+
+    if (error) {
+      return <Box sx={{ p: 4, color: 'error.main' }}>Error: {error}</Box>;
+    }
+
+    if (!user) {
+      return <Navigate to="/" />;
+    }
+
+    return (
+      <Box sx={{ flexGrow: 1, p: 4 }}>
+        <Typography variant="h4" sx={{ mb: 3 }}>
+          Welcome, {user.name}!
+        </Typography>
+
+        {/* Cards Section */}
         <Grid
-          item
-          key={idx}
-          xs={12}
-          sm={6}
-          md={4}
-          lg={3}
+          container
+          spacing={2}
           sx={{
-            display: 'flex',
-            justifyContent: 'center',
+            mb: 3,
+            justifyContent: 'flex-start',
+            flexWrap: 'wrap',
           }}
         >
-          <Box
-            sx={{
-              width: '100%',
-              maxWidth: 300, // control width of each card
-            }}
-          >
-            <StatCard icon={item.icon} title={item.title} value={item.value} />
-          </Box>
+          {stats.map((item, idx) => (
+            <Grid
+              item
+              key={idx}
+              xs={12}
+              sm={6}
+              md={4}
+              lg={3}
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+              }}
+            >
+              <Box sx={{ width: '100%', maxWidth: 300 }}>
+                <StatCard icon={item.icon} title={item.title} value={item.value} />
+              </Box>
+            </Grid>
+          ))}
         </Grid>
-      ))}
-    </Grid>
 
-
-
-      {/* Charts Section */}
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={6}>
-          <Paper elevation={3} sx={{ p: 2, borderRadius: 2 }}>
-            <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-              Sales Data
-            </Typography>
-            <Line data={dataLine} />
-          </Paper>
+        {/* Charts Section */}
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6}>
+            <Paper elevation={3} sx={{ p: 2, borderRadius: 2 }}>
+              <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+                Sales Data
+              </Typography>
+              <Line data={dataLine} />
+            </Paper>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Paper elevation={3} sx={{ p: 2, borderRadius: 2 }}>
+              <Typography variant="subtitle1" fontWeight={600} gutterBottom>
+                Products Data
+              </Typography>
+              <Bar data={dataBar} />
+            </Paper>
+          </Grid>
         </Grid>
-        <Grid item xs={12} md={6}>
-          <Paper elevation={3} sx={{ p: 2, borderRadius: 2 }}>
-            <Typography variant="subtitle1" fontWeight={600} gutterBottom>
-              Products Data
-            </Typography>
-            <Bar data={dataBar} />
-          </Paper>
-        </Grid>
-      </Grid>
-    </Box>
-  );
-};
+      </Box>
+    );
+  };
 
-export default Dashboard;
+  export default WelcomeDashboard;
+
+
+
