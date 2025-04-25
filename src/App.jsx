@@ -11,10 +11,11 @@ import SuperAdminLayout from './components/superadmin/SuperAdminLayout';
 import AnchorLayout from './components/anchor/AnchorLayout';
 import WelcomeDashboard from './components/admin/WelcomeDashboard';
 import ProfilePage from './pages/ProfilePage';
-
+import { AuthProvider } from './context/AuthContext';
 function App() {
   return (
     <Router>
+      <AuthProvider>
       <Routes>
         <Route path="/" element={<AuthPage />} />
         <Route path="/login" element={<AuthPage />} />
@@ -44,7 +45,7 @@ function App() {
           <Route path="travel" element={<TravelPackage />} />
           <Route path="visa" element={<VisaPocess />} />
         </Route>
-      </Routes>
+      </Routes></AuthProvider>
     </Router>
   );
 }

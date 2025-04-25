@@ -14,7 +14,9 @@ import ChatIcon from '@mui/icons-material/Chat';
 import { Outlet, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import  logo from '../../assets/logot.png';
 import { DarkModeSwitch } from 'react-toggle-dark-mode';
-
+import LogoutIcon from '@mui/icons-material/Logout';
+import { Divider } from '@mui/material';
+import axios from 'axios';
 const drawerWidth = 240;
 
 import { useTheme } from '../../theme/ThemeContext';
@@ -41,7 +43,24 @@ const AdminLayout = () => {
     setMobileOpen(!mobileOpen);
   };
 
+  const handleLogout = async () => {
+    try {
+      // Logout API (make sure it clears the HttpOnly cookie)
+      //  await axios.get('http://localhost:5000/logout', { withCredentials: true });
 
+      // In your client code when calling logout
+fetch('http://localhost:5000/api/auth/logout', {
+  method: 'POST',
+  credentials: 'include'
+});
+  
+      // Redirect to login page
+      navigate('/login');
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
+  };
+  
   const drawer = (
     <Box>
       <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1,bgcolor:"GrayText" }}>
@@ -50,7 +69,7 @@ const AdminLayout = () => {
           ZEAL Travels
         </Typography>
       </Box>
-      <List sx={{ p: 0, m: 0 }}>
+      {/* <List sx={{ p: 0, m: 0 }}>
   {menuItems.map((item) => (
     <ListItem key={item.text} disablePadding sx={{ mt: 0,}}>
       <ListItemButton
@@ -79,6 +98,64 @@ const AdminLayout = () => {
       </ListItemButton>
     </ListItem>
   ))}
+</List> */}
+<List
+  sx={{ p: 0, m: 0, display: 'flex', flexDirection: 'column', height: '100%' }}
+>
+  <Box sx={{ flexGrow: 1 }}>
+    {menuItems.map((item) => (
+      <ListItem key={item.text} disablePadding sx={{ mt: 0 }}>
+        <ListItemButton
+          onClick={() => {
+            navigate(item.path);
+            if (isMobile) setMobileOpen(false);
+          }}
+          selected={location.pathname === item.path}
+          sx={{
+            mt: 0,
+            '&.Mui-selected': {
+              backgroundColor: '#1976d2',
+              color: '#fff',
+              '& .MuiListItemIcon-root': {
+                color: '#fff',
+              },
+            },
+            '&.Mui-selected:hover': {
+              backgroundColor: '#1565c0',
+            },
+          }}
+        >
+          <ListItemIcon>{item.icon}</ListItemIcon>
+          <ListItemText primary={item.text} />
+        </ListItemButton>
+      </ListItem>
+    ))}
+  </Box>
+
+  <Divider />
+
+  {/* 🔻 Logout at the bottom */}
+  <Box>
+    <ListItem disablePadding>
+      <ListItemButton
+        onClick={handleLogout}
+        sx={{
+          '&:hover': {
+            backgroundColor: '#ff5252',
+            color: '#fff',
+            '& .MuiListItemIcon-root': {
+              color: '#fff',
+            },
+          },
+        }}
+      >
+        <ListItemIcon>
+          <LogoutIcon />
+        </ListItemIcon>
+        <ListItemText primary="Logout" />
+      </ListItemButton>
+    </ListItem>
+  </Box>
 </List>
 
     </Box>
