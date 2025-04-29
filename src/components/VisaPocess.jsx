@@ -11,12 +11,13 @@ import {
   MenuItem, 
   OutlinedInput,
   Chip,
-  Paper
+  Paper,
+  Container
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-
+import axios from 'axios';
 function VisaPocess() {
   const [countries, setCountries] = useState([]);
   const [visaType, setVisaType] = useState('');
@@ -30,7 +31,7 @@ function VisaPocess() {
   const [remarks, setRemarks] = useState('');
 
   const countryOptions = [
-    'USA', 'UK', 'Canada', 'Australia', 'UAE', 'Germany', 'France', 'Italy', 'Spain', 'Japan'
+    'USA', 'UK', 'Canada', 'Australia', 'UAE', 'Germany', 'France',  'Japan'
   ];
 
   const visaTypeOptions = [
@@ -48,28 +49,48 @@ function VisaPocess() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    const countrie = countries.join(", "); 
+    // Prepare the form data to match the backend API format
     const formData = {
-      countries,
-      visaType,
-      travelDate,
-      travelers: { adults, children, infants },
-      childrenAges,
-      mobileNumber,
-      visaStatus,
-      remarks
+      countrie,           // e.g. 'USA, Canada'
+      visaType,            // e.g. 'Tourist'
+      travelDate,          // Date object, or string (ISO format)
+      adults,              // Number of adults
+      children,            // Number of children
+      infants,             // Number of infants
+      childrenAges,        // Comma-separated ages (e.g. '4,7,12')
+      mobileNumber,        // Phone number
+      visaStatus,          // Visa status (e.g. 'Pending', 'Approved')
+      remarks              // Any additional remarks (string)
     };
+  
     console.log('Form submitted:', formData);
-    // Here you would typically send the data to your backend
+  
+    // Now, send the form data to the backend
+    // Example using Axios or Fetch for API call
+  
+    axios.post('http://localhost:5000/api/visa/bookings', formData,{
+      withCredentials: true,
+    })
+      .then((response) => {
+        console.log('Visa booking created:', response.data);
+        // Handle success (e.g., show a confirmation message, clear form, etc.)
+      })
+      .catch((error) => {
+        console.error('Error submitting visa booking:', error);
+        // Handle error (e.g., show error message)
+      });
   };
+  
 
   return (
-    <Box sx={{ p: 3, maxWidth: 800, mx: 'auto', mt: 4 }}>
+    <Container sx={{ p: 3,  mx: 'auto'}}>
       <Paper elevation={3} sx={{ p: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom sx={{ mb: 4 }}>
           Visa Processing Form
         </Typography>
         
-        <form onSubmit={handleSubmit}>
+     
           <Grid container spacing={3}>
             {/* Countries Selection */}
             <Grid item xs={12}>
@@ -99,7 +120,7 @@ function VisaPocess() {
             </Grid>
 
             {/* Visa Type */}
-            <Grid item xs={12}>
+            <Grid item xs={12} md={6}>
               <FormControl fullWidth>
                 <InputLabel id="visa-type-label">Type of Visa</InputLabel>
                 <Select
@@ -118,7 +139,7 @@ function VisaPocess() {
             </Grid>
 
             {/* Travel Date */}
-            <Grid item xs={12}>
+            <Grid item xs={12} md={6}>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   label="Travel Date"
@@ -170,19 +191,19 @@ function VisaPocess() {
             </Grid>
 
             {/* Age of Children */}
-            <Grid item xs={12}>
+            <Grid item xs={12} md={6}>
               <TextField
                 label="Age of Children (comma-separated)"
                 fullWidth
                 value={childrenAges}
                 onChange={(e) => setChildrenAges(e.target.value)}
                 placeholder="e.g. 4, 7, 12"
-                disabled={children === 0}
+               
               />
             </Grid>
 
             {/* Mobile Number */}
-            <Grid item xs={12}>
+            <Grid item xs={12} md={6}>
               <TextField
                 label="Mobile Number"
                 fullWidth
@@ -225,20 +246,22 @@ function VisaPocess() {
             </Grid>
 
             {/* Submit Button */}
-            <Grid item xs={12}>
-              <Button 
-                variant="contained" 
-                color="primary" 
-                type="submit"
-                sx={{ py: 1.5, px: 4, fontSize: '1rem' }}
-              >
-                Submit Visa Application
-              </Button>
-            </Grid>
+            <Grid container spacing={2} sx={{ mt: 2, justifyContent: 'center' }}>
+  <Grid item>
+    <Button variant="contained" color="error">
+      Cancel
+    </Button>
+  </Grid>
+  <Grid item>
+    <Button variant="contained" color="success"onClick={handleSubmit}>
+      Book Hotel
+    </Button>
+  </Grid>
+</Grid>
           </Grid>
-        </form>
+
       </Paper>
-    </Box>
+    </Container>
   );
 }
 

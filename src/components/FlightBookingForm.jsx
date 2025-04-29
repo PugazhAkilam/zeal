@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { Box, Button, Typography, Grid, TextField } from '@mui/material';
-import TripTypeSection from './FormSections/TripTypeSection';
-import DateSection from './FormSections/DateSection';
-import PassengerSection from './FormSections/PassengerSection';
-
+import React, { useState, useEffect } from 'react';
+import { Box, Button, Typography, Grid, TextField, Container, Paper, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { DataGrid } from '@mui/x-data-grid';
+import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import axios from 'axios';
 
 const FlightBookingForm = () => {
   const [tripType, setTripType] = useState('Single');
@@ -12,59 +12,281 @@ const FlightBookingForm = () => {
   const [segment1Date, setSegment1Date] = useState(null);
   const [segment2Date, setSegment2Date] = useState(null);
   const [segment3Date, setSegment3Date] = useState(null);
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetchBookings();
+  }, []);
+
+  const fetchBookings = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get('http://localhost:5000/api/flight/bookings',{
+        withCredentials: true // This enables sending cookies
+      });
+      setBookings(response.data.bookings);
+    } catch (error) {
+      console.error('Error fetching bookings:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+// console.log(bookings);
+ 
+  const [fareType, setFareType] = useState('Normal');
+  const [adults, setAdults] = useState(1);
+  const [children, setChildren] = useState(0);
+  const [infants, setInfants] = useState(0);
+  const [childrenAge, setChildrenAge] = useState('');
+  const [mobileNumber, setMobileNumber] = useState('');
+  const [bookingStatus, setBookingStatus] = useState('Pending');
+
+  const handleSubmit = async () => {
+    try {
+      const bookingData = {
+        tripType,
+        fareType,
+        departureDate,
+        returnDate,
+        segment1Date,
+        segment2Date,
+        segment3Date,
+        passengers: {
+          adults,
+          children,
+          infants,
+          childrenAge
+        },
+        mobileNumber,
+        bookingStatus,
+        remarks: document.querySelector('[name="remarks"]')?.value || ''
+      };
+
+      // Include credentials to send cookies
+      await axios.post('http://localhost:5000/api/flight/bookings', bookingData, {
+        withCredentials: true // This enables sending cookies
+      });
+      
+      fetchBookings();
+    } catch (error) {
+      console.error('Error creating booking:', error);
+    }
+  };
+
+  const columns = [
+    { field: 'id', headerName: 'ID', width: 70 },
+    { field: 'tripType', headerName: 'Trip Type', width: 130 },
+    { field: 'departureDate', headerName: 'Departure', width: 130 },
+    { field: 'returnDate', headerName: 'Return', width: 130 },
+    { field: 'bookingStatus', headerName: 'Status', width: 130 },
+    { field: 'createdAt', headerName: 'Created At', width: 180 }
+  ];
+
+  const datePickerProps = {
+    slotProps: {
+      textField: {
+        fullWidth: true,
+        margin: 'normal',
+      },
+    },
+  };
 
   return (
-    <Box >
-      <Box >
+    <Container sx={{ p: 3, mx: 'auto' }}>
+      <Paper elevation={3} sx={{ p: 4 }}>
         <Typography variant="h6" gutterBottom>
           Flight Booking Form
         </Typography>
 
-        <TripTypeSection tripType={tripType} setTripType={setTripType} />
+        {/* Trip Type and Fare Type */}
+        <Grid container spacing={4}>
+          <Grid item xs={6} sm={6}>
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Trip Type</InputLabel>
+              <Select
+                value={tripType}
+                label="Trip Type"
+                onChange={(e) => setTripType(e.target.value)}
+              >
+                <MenuItem value="Single">Single</MenuItem>
+                <MenuItem value="Roundtrip">Roundtrip</MenuItem>
+                <MenuItem value="Multicity">Multicity</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={6} sm={6}>
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Fare Type</InputLabel>
+              <Select 
+                value={fareType}
+                onChange={(e) => setFareType(e.target.value)}
+                label="Fare Type"
+              >
+                <MenuItem value="Normal">Normal</MenuItem>
+                <MenuItem value="Economy">Economy</MenuItem>
+                <MenuItem value="Business">Business</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
 
-        <DateSection
-          tripType={tripType}
-          departureDate={departureDate}
-          setDepartureDate={setDepartureDate}
-          returnDate={returnDate}
-          setReturnDate={setReturnDate}
-          segment1Date={segment1Date}
-          setSegment1Date={setSegment1Date}
-          segment2Date={segment2Date}
-          setSegment2Date={setSegment2Date}
-          segment3Date={segment3Date}
-          setSegment3Date={setSegment3Date}
-        />
+        {/* Date Pickers */}
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          {tripType === 'Single' && (
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <DatePicker
+                  label="Departure Date"
+                  value={departureDate}
+                  onChange={(newValue) => setDepartureDate(newValue)}
+                  {...datePickerProps}
+                />
+              </Grid>
+            </Grid>
+          )}
+          {tripType === 'Roundtrip' && (
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <DatePicker
+                  label="Departure Date"
+                  value={departureDate}
+                  onChange={(newValue) => setDepartureDate(newValue)}
+                  {...datePickerProps}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <DatePicker
+                  label="Return Date"
+                  value={returnDate}
+                  onChange={(newValue) => setReturnDate(newValue)}
+                  {...datePickerProps}
+                />
+              </Grid>
+            </Grid>
+          )}
+          {tripType === 'Multicity' && (
+            <Grid container spacing={2}>
+              {[segment1Date, segment2Date, segment3Date].map((date, index) => (
+                <Grid item xs={4} key={index}>
+                  <DatePicker
+                    label={`Segment ${index + 1}`}
+                    value={date}
+                    onChange={(newValue) => {
+                      if (index === 0) setSegment1Date(newValue);
+                      if (index === 1) setSegment2Date(newValue);
+                      if (index === 2) setSegment3Date(newValue);
+                    }}
+                    {...datePickerProps}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          )}
+        </LocalizationProvider>
 
-        <PassengerSection />
+        {/* Passenger Info */}
+        <Typography variant="subtitle1" sx={{ mt: 2 }}>
+          Number of Passengers
+        </Typography>
+        <Grid container spacing={2}>
+          {['Adults', 'Children', 'Infants'].map((label, index) => (
+            <Grid item xs={4} key={index}>
+              <TextField
+                label={label}
+                value={label === 'Adults' ? adults : label === 'Children' ? children : infants}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value) || 0;
+                  if (label === 'Adults') setAdults(Math.max(1, value));
+                  else if (label === 'Children') setChildren(Math.max(0, value));
+                  else setInfants(Math.max(0, value));
+                }}
+                type="number"
+                fullWidth
+              />
+            </Grid>
+          ))}
+        </Grid>
 
+        <Grid container spacing={2} sx={{ mt: 1 }}>
+          <Grid item xs={4}>
+            <TextField
+              fullWidth
+              label="Age of Children"
+              placeholder="e.g. 5, 7"
+              margin="normal"
+              value={childrenAge}
+              onChange={(e) => setChildrenAge(e.target.value)}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField
+              fullWidth
+              label="Mobile Number"
+              placeholder="90000 80000"
+              margin="normal"
+              value={mobileNumber}
+              onChange={(e) => setMobileNumber(e.target.value)}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Booking Status</InputLabel>
+              <Select 
+                value={bookingStatus}
+                onChange={(e) => setBookingStatus(e.target.value)}
+                label="Booking Status"
+              >
+                <MenuItem value="Pending">Pending</MenuItem>
+                <MenuItem value="Cancelled">InProgress</MenuItem>
+                <MenuItem value="Confirmed">Completed</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
+
+        {/* Remarks */}
         <TextField
           fullWidth
+          name="remarks"
           label="Remarks"
           placeholder="Enter any additional notes or remarks here..."
           multiline
           rows={3}
           margin="normal"
-          sx={{
-            width: { xs: '100%', md: '815px' },
-       
-          }}
         />
 
-        <Grid container spacing={2} sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
-          <Grid item xs={6} sx={{ maxWidth: '300px' }}>
-            <Button variant="contained" color="error" fullWidth>
+        {/* Buttons */}
+        <Grid container spacing={2} sx={{ mt: 2, justifyContent: 'center' }}>
+          <Grid item>
+            <Button variant="contained" color="error">
               Cancel
             </Button>
           </Grid>
-          <Grid item xs={6} sx={{ maxWidth: '300px' }}>
-            <Button variant="contained" color="success" fullWidth>
+          <Grid item>
+            <Button variant="contained" color="success" onClick={handleSubmit}>
               Book Flight
             </Button>
           </Grid>
         </Grid>
-      </Box>
-    </Box>
+
+        {/* Booking History */}
+        <Box sx={{ height: 400, width: '100%', mt: 4 }}>
+          <Typography variant="h6" gutterBottom>
+            Booking History
+          </Typography>
+          <DataGrid
+            rows={bookings}
+            columns={columns}
+            pageSize={5}
+            rowsPerPageOptions={[5]}
+            checkboxSelection
+            disableSelectionOnClick
+            loading={loading}
+          />
+        </Box>
+      </Paper>
+    </Container>
   );
 };
 

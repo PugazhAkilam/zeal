@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Grid, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Box, Typography, Grid, TextField, Button, FormControl, InputLabel, Select, MenuItem, Paper, Container } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import axios from 'axios';
 
 
 // Country and city data
@@ -10,17 +11,17 @@ const countryData = {
   USA: ['New York', 'Los Angeles', 'Chicago', 'Miami', 'Las Vegas'],
   UK: ['London', 'Manchester', 'Birmingham', 'Edinburgh', 'Glasgow'],
   UAE: ['Dubai', 'Abu Dhabi', 'Sharjah', 'Ajman', 'Ras Al Khaimah'],
-  Singapore: ['Singapore City'],
-  Thailand: ['Bangkok', 'Phuket', 'Pattaya', 'Chiang Mai', 'Krabi'],
-  Malaysia: ['Kuala Lumpur', 'Penang', 'Langkawi', 'Johor Bahru', 'Malacca'],
-  Indonesia: ['Bali', 'Jakarta', 'Lombok', 'Yogyakarta', 'Bandung'],
-  France: ['Paris', 'Nice', 'Lyon', 'Marseille', 'Bordeaux'],
-  Italy: ['Rome', 'Venice', 'Florence', 'Milan', 'Naples'],
-  Spain: ['Barcelona', 'Madrid', 'Seville', 'Valencia', 'Malaga']
+  // Singapore: ['Singapore City'],
+  // Thailand: ['Bangkok', 'Phuket', 'Pattaya', 'Chiang Mai', 'Krabi'],
+  // Malaysia: ['Kuala Lumpur', 'Penang', 'Langkawi', 'Johor Bahru', 'Malacca'],
+  // Indonesia: ['Bali', 'Jakarta', 'Lombok', 'Yogyakarta', 'Bandung'],
+  France: ['Paris', 'Nice', 'Lyon', 'Marseille', 'Bordeaux']
+  // Italy: ['Rome', 'Venice', 'Florence', 'Milan', 'Naples'],
+  // Spain: ['Barcelona', 'Madrid', 'Seville', 'Valencia', 'Malaga']
 };
 
 // Indian cities for domestic bookings
-const indianCities = ['Delhi', 'Mumbai', 'Bangalore', 'Chennai', 'Kolkata', 'Hyderabad', 'Pune', 'Jaipur', 'Goa', 'Kochi'];
+const indianCities = ['Delhi', 'Mumbai', 'Bangalore',  'Hyderabad'];
 
 function HotelBooking() {
   const [checkInDate, setCheckInDate] = useState(null);
@@ -29,7 +30,17 @@ function HotelBooking() {
   const [selectedCountry, setSelectedCountry] = useState('');
   const [cityOptions, setCityOptions] = useState(indianCities);
   const [selectedCity, setSelectedCity] = useState(indianCities[0]);
-
+  const [hotelName, setHotelName] = useState('');
+  const [hotelStarRating, setHotelStarRating] = useState(5);
+  const [adults, setAdults] = useState(1);
+  const [children, setChildren] = useState(0);
+  const [infants, setInfants] = useState(0);
+  const [ageOfChildren, setAgeOfChildren] = useState('');
+  const [budgetRange, setBudgetRange] = useState();
+  const [mealPlan, setMealPlan] = useState('EP');
+  const [bookingStatus, setBookingStatus] = useState('Pending');
+  const [remarks, setRemarks] = useState('');
+  
   // Update city options when country changes
   useEffect(() => {
     if (bookingType === 'International' && selectedCountry) {
@@ -42,9 +53,43 @@ function HotelBooking() {
     }
   }, [selectedCountry, bookingType]);
 
+  const handleSubmit = async () => {
+    const payload = {
+      booking_type: bookingType,
+      country: bookingType === 'International' ? selectedCountry : 'India',
+      city: selectedCity,
+      check_in_date: checkInDate ? checkInDate.format('YYYY-MM-DD') : null,
+      check_out_date: checkOutDate ? checkOutDate.format('YYYY-MM-DD') : null,
+      hotel_name: hotelName,
+      hotel_star_rating: parseInt(hotelStarRating),
+      adults: parseInt(adults),
+      children: parseInt(children),
+      infants: parseInt(infants),
+      age_of_children: ageOfChildren,
+      budget_range: budgetRange,
+      meal_plan: mealPlan,
+      booking_status: bookingStatus,
+      remarks: remarks
+    };
+  
+    try {
+      await axios.post('http://localhost:5000/api/hotel/bookings', payload, {
+        withCredentials: true // This enables sending cookies
+      });
+     // const token = localStorage.getItem('token'); // assuming your auth token is stored
+      // const response = await axios.post('/api/hotel/bookings', payload, {
+      //   headers: { Authorization: `Bearer ${token}` }
+      // });
+      //alert('Hotel booked successfully! Booking ID: ' + response.data.bookingId);
+    } catch (error) {
+      console.error('Error booking hotel:', error);
+      alert('Failed to book hotel.');
+    }
+  };
+  
   return (
-    <Box >
-      <Box >
+    <Container sx={{ p: 3,  mx: 'auto',  }}>
+       <Paper elevation={3} sx={{ p: 4 }}>
         <Typography variant="h6" gutterBottom>
           Hotel Booking Form
         </Typography>
@@ -147,27 +192,29 @@ function HotelBooking() {
         {/* Hotel Details */}
         <Grid container spacing={2}>
           <Grid item xs={12} sm={6}>
-            <TextField
-              fullWidth
-              label="Hotel Name"
-              margin="normal"
-            
-            />
+          <TextField
+  fullWidth
+  label="Hotel Name"
+  margin="normal"
+  value={hotelName}
+  onChange={(e) => setHotelName(e.target.value)}
+/>
+
           </Grid>
           <Grid item xs={12} sm={6}>
-            <FormControl fullWidth margin="normal">
-              <InputLabel >Hotel Star Rating</InputLabel>
-              <Select
-                defaultValue="5"
-                label="Hotel Star Rating"
-            
-              >
-                <MenuItem value="3">3 Star</MenuItem>
-                <MenuItem value="4">4 Star</MenuItem>
-                <MenuItem value="5">5 Star</MenuItem>
-                <MenuItem value="7">7 Star</MenuItem>
-              </Select>
-            </FormControl>
+          <FormControl fullWidth margin="normal">
+  <InputLabel>Hotel Star Rating</InputLabel>
+  <Select
+    value={hotelStarRating}
+    onChange={(e) => setHotelStarRating(e.target.value)}
+    label="Hotel Star Rating"
+  >
+    <MenuItem value={3}>3 Star</MenuItem>
+    <MenuItem value={4}>4 Star</MenuItem>
+    <MenuItem value={5}>5 Star</MenuItem>
+  </Select>
+</FormControl>
+
           </Grid>
         </Grid>
 
@@ -176,94 +223,127 @@ function HotelBooking() {
           Number of Guests
         </Typography>
         <Grid container spacing={2}>
-          {['Adults', 'Children', 'Infants'].map((label, index) => (
-            <Grid item xs={12} sm={4} key={index}>
-              <TextField
-                label={label}
-                defaultValue={label === 'Adults' ? '1' : '0'}
-                margin="normal"
-            
-              />
-            </Grid>
-          ))}
-        </Grid>
+  <Grid item xs={12} sm={4}>
+    <TextField
+      label="Adults"
+      value={adults}
+      type="number"
+      onChange={(e) => setAdults(e.target.value)}
+      margin="normal"
+      fullWidth
+    />
+  </Grid>
+  <Grid item xs={12} sm={4}>
+    <TextField
+      label="Children"
+      value={children}
+      type="number"
+      onChange={(e) => setChildren(e.target.value)}
+      margin="normal"
+      fullWidth
+    />
+  </Grid>
+  <Grid item xs={12} sm={4}>
+    <TextField
+      label="Infants"
+      value={infants}
+      type="number"
+      onChange={(e) => setInfants(e.target.value)}
+      margin="normal"
+      fullWidth
+    />
+  </Grid>
+</Grid>
+
 
         {/* Additional Details */}
         <Grid container spacing={2}>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Age of Children (comma-separated)"
-              placeholder="e.g. 5, 9"
-              margin="normal"
-        
-            />
-          </Grid>
-          <Grid item xs={12}>
-            <TextField
-              fullWidth
-              label="Budget Range (in USD)"
-              placeholder="e.g. 500-1000"
-              margin="normal"
-             
-            />
-          </Grid>
-        </Grid>
+  <Grid item xs={12} md={6}>
+    <TextField
+      fullWidth
+      label="Age of Children (comma-separated)"
+      placeholder="e.g. 5, 9"
+      value={ageOfChildren}
+      onChange={(e) => setAgeOfChildren(e.target.value)}
+      margin="normal"
+    />
+  </Grid>
+  <Grid item xs={12} md={6}>
+    <TextField
+      fullWidth
+      label="Budget Range (in USD)"
+      placeholder="e.g. 500-1000"
+      value={budgetRange}
+      onChange={(e) => setBudgetRange(e.target.value)}
+      margin="normal"
+    />
+  </Grid>
+</Grid>
+
+
 
         {/* Meal Plan */}
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth margin="normal">
-              <InputLabel >Meal Plan</InputLabel>
-              <Select
-                defaultValue="EP"
-                label="Meal Plan"
-               
-              >
-                <MenuItem value="EP">EP (Room Only)</MenuItem>
-                <MenuItem value="CP">CP (Breakfast)</MenuItem>
-                <MenuItem value="MAP">MAP (Breakfast & Dinner)</MenuItem>
-                <MenuItem value="AP">AP (All Meals)</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <FormControl fullWidth margin="normal">
-              <InputLabel >Booking Status</InputLabel>
-              <Select
-                defaultValue="Pending"
-                label="Booking Status"
+  <Grid item xs={12} sm={6}>
+    <FormControl fullWidth margin="normal">
+      <InputLabel>Meal Plan</InputLabel>
+      <Select
+        value={mealPlan}
+        onChange={(e) => setMealPlan(e.target.value)}
+        label="Meal Plan"
+      >
+        <MenuItem value="EP">EP (Room Only)</MenuItem>
+        <MenuItem value="CP">CP (Breakfast)</MenuItem>
+        <MenuItem value="MAP">MAP (Breakfast & Dinner)</MenuItem>
+        <MenuItem value="AP">AP (All Meals)</MenuItem>
+      </Select>
+    </FormControl>
+  </Grid>
+  <Grid item xs={12} sm={6}>
+    <FormControl fullWidth margin="normal">
+      <InputLabel>Booking Status</InputLabel>
+      <Select
+        value={bookingStatus}
+        onChange={(e) => setBookingStatus(e.target.value)}
+        label="Booking Status"
+      >
+        <MenuItem value="Pending">Pending</MenuItem>
+        <MenuItem value="Confirmed">Confirmed</MenuItem>
+        <MenuItem value="Cancelled">Cancelled</MenuItem>
+      </Select>
+    </FormControl>
+  </Grid>
+</Grid>
 
-              >
-                <MenuItem value="Pending">Pending</MenuItem>
-                <MenuItem value="Confirmed">Confirmed</MenuItem>
-                <MenuItem value="Cancelled">Cancelled</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-        </Grid>
 
         {/* Remarks */}
         <TextField
-          fullWidth
-          label="Remarks"
-          placeholder="Additional requests or notes..."
-          multiline
-          rows={3}
-          margin="normal"
-         
-        />
+  fullWidth
+  label="Remarks"
+  value={remarks}
+  onChange={(e) => setRemarks(e.target.value)}
+  margin="normal"
+  multiline
+  rows={3}
+/>
+
 
         {/* Submit Button */}
-        <Grid container spacing={2} sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
-          <Grid item xs={12} sm={6} sx={{ maxWidth: '300px' }}>
-            <Button variant="contained" color="primary" fullWidth>
-              Submit Booking
-            </Button>
-          </Grid>
-        </Grid>
-      </Box>
-    </Box>
+        <Grid container spacing={2} sx={{ mt: 2, justifyContent: 'center' }}>
+  <Grid item>
+    <Button variant="contained" color="error">
+      Cancel
+    </Button>
+  </Grid>
+  <Grid item>
+  <Button variant="contained" color="success" onClick={handleSubmit}>
+  Book Hotel
+</Button>
+
+  </Grid>
+</Grid>
+        </Paper >
+    </Container>
   );
 }
 
