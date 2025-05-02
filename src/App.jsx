@@ -10,11 +10,12 @@ import AuthPage from './pages/AuthPage';
 import AdminLayout from './components/admin/AdminLayout';
 import SuperAdminLayout from './components/superadmin/SuperAdminLayout';
 import AnchorLayout from './components/anchor/AnchorLayout';
-import WelcomeDashboard from './components/admin/WelcomeDashboard';
+import WelcomeDashboard from './components/admin/welcomedashboard';
 import ProfilePage from './pages/ProfilePage';
 import { AuthProvider } from './context/AuthContext';
 import NotFound from './pages/NotFoundPage';
 import Unauthorized from './pages/UnAuth';
+import FormTable from './components/admin/FormTable';
 // Create ProtectedRoute component
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
@@ -51,6 +52,7 @@ function App() {
             <Route path="travel" element={<TravelPackage />} />
             <Route path="visa" element={<VisaPocess />} />
             <Route path="profile" element={<ProfilePage />} />
+            <Route path="table" element={<FormTable />} />
           </Route>
 
           {/* Super Admin Routes */}

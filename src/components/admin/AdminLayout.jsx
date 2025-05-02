@@ -37,6 +37,7 @@ const AdminLayout = () => {
     { text: 'Hotel', icon: <HotelIcon />, path: '/admin/hotel' },
     { text: 'Travel', icon: <LuggageIcon />, path: '/admin/travel' },
     { text: 'Visa', icon: <VisaIcon />, path: '/admin/visa' },
+    { text: 'Table', icon: <VisaIcon />, path: '/admin/table' },
   ];
 
   const handleDrawerToggle = () => {
