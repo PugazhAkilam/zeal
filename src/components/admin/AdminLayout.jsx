@@ -17,6 +17,7 @@ import { DarkModeSwitch } from 'react-toggle-dark-mode';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { Divider } from '@mui/material';
 import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
 const drawerWidth = 240;
 
 import { useTheme } from '../../theme/ThemeContext';
@@ -30,15 +31,41 @@ const AdminLayout = () => {
   const location = useLocation();
 
 
+  const { user, loading } = useAuth(); // Get loading state from useAuth
 
-  const menuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/admin' },
-    { text: 'Flight', icon: <FlightIcon />, path: '/admin/flight' },
-    { text: 'Hotel', icon: <HotelIcon />, path: '/admin/hotel' },
-    { text: 'Travel', icon: <LuggageIcon />, path: '/admin/travel' },
-    { text: 'Visa', icon: <VisaIcon />, path: '/admin/visa' },
-    { text: 'Table', icon: <VisaIcon />, path: '/admin/table' },
-  ];
+  const getMenuItems = () => {
+    if (user?.userType === 1) {
+      return [
+        { text: 'Dashboard', icon: <DashboardIcon />, path: '/superadmin' },
+        { text: 'Flight', icon: <FlightIcon />, path: '/superadmin/flight' },
+        { text: 'Hotel', icon: <HotelIcon />, path: '/superadmin/hotel' },
+        { text: 'Travel', icon: <LuggageIcon />, path: '/superadmin/travel' },
+        { text: 'Visa', icon: <VisaIcon />, path: '/superadmin/visa' },
+        { text: 'Table', icon: <VisaIcon />, path: '/admin/table' },
+      ];
+    } else if (user?.userType === 2) {
+      return [
+        { text: 'Dashboard', icon: <DashboardIcon />, path: '/admin' },
+        { text: 'Flight', icon: <FlightIcon />, path: '/admin/flight' },
+        { text: 'Hotel', icon: <HotelIcon />, path: '/admin/hotel' },
+        { text: 'Travel', icon: <LuggageIcon />, path: '/admin/travel' },
+        { text: 'Visa', icon: <VisaIcon />, path: '/admin/visa' },
+        { text: 'Table', icon: <VisaIcon />, path: '/admin/table' },
+      ];
+    } else if (user?.userType === 3) {
+      return [
+        { text: 'Dashboard', icon: <DashboardIcon />, path: '/anchor' },
+        { text: 'Flight', icon: <FlightIcon />, path: '/anchor/flight' },
+        { text: 'Hotel', icon: <HotelIcon />, path: '/anchor/hotel' },
+        { text: 'Travel', icon: <LuggageIcon />, path: '/anchor/travel' },
+        { text: 'Visa', icon: <VisaIcon />, path: '/anchor/visa' },
+        { text: 'Table', icon: <VisaIcon />, path: '/admin/table' },
+      ];
+    }
+    return []; // Return empty array if no user type matches
+  };
+
+  const menuItems = getMenuItems();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -70,36 +97,7 @@ fetch('http://localhost:5000/api/auth/logout', {
           ZEAL Travels
         </Typography>
       </Box>
-      {/* <List sx={{ p: 0, m: 0 }}>
-  {menuItems.map((item) => (
-    <ListItem key={item.text} disablePadding sx={{ mt: 0,}}>
-      <ListItemButton
-        onClick={() => {
-          navigate(item.path);
-          if (isMobile) setMobileOpen(false);
-        }}
-        selected={location.pathname === item.path}
-        sx={{
-            mt: 0,
-          '&.Mui-selected': {
-            backgroundColor: '#1976d2',
-            color: '#fff',
-           
-            '& .MuiListItemIcon-root': {
-              color: '#fff',
-            },
-          },
-          '&.Mui-selected:hover': {
-            backgroundColor: '#1565c0',
-          },
-        }}
-      >
-        <ListItemIcon>{item.icon}</ListItemIcon>
-        <ListItemText primary={item.text} />
-      </ListItemButton>
-    </ListItem>
-  ))}
-</List> */}
+    
 <List
   sx={{ p: 0, m: 0, display: 'flex', flexDirection: 'column', height: '100%' }}
 >
@@ -188,7 +186,7 @@ fetch('http://localhost:5000/api/auth/logout', {
           
           </Box>
           <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-            Admin Dashboard - {location.pathname.split('/').pop().charAt(0).toUpperCase() + location.pathname.split('/').pop().slice(1)}
+          {!loading && user?.name ? user.name.toUpperCase() : "Loading..."} Dashboard - {location.pathname.split('/').pop().charAt(0).toUpperCase() + location.pathname.split('/').pop().slice(1)}
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <DarkModeSwitch

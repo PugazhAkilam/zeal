@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Button, Typography, Grid, TextField, Container, Paper, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import { DataGrid } from '@mui/x-data-grid';
+
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import axios from 'axios';
-
 const FlightBookingForm = () => {
   const [tripType, setTripType] = useState('Single');
   const [departureDate, setDepartureDate] = useState(null);
@@ -12,29 +11,7 @@ const FlightBookingForm = () => {
   const [segment1Date, setSegment1Date] = useState(null);
   const [segment2Date, setSegment2Date] = useState(null);
   const [segment3Date, setSegment3Date] = useState(null);
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    fetchBookings();
-  }, []);
-
-  const fetchBookings = async () => {
-    try {
-      setLoading(true);
-      const response = await axios.get('http://localhost:5000/api/flight/bookings',{
-        withCredentials: true // This enables sending cookies
-      });
-      setBookings(response.data.bookings);
-    } catch (error) {
-      console.error('Error fetching bookings:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-// console.log(bookings);
- 
-  const [fareType, setFareType] = useState('Normal');
+ const [fareType, setFareType] = useState('Normal');
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
@@ -74,14 +51,7 @@ const FlightBookingForm = () => {
     }
   };
 
-  const columns = [
-    { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'tripType', headerName: 'Trip Type', width: 130 },
-    { field: 'departureDate', headerName: 'Departure', width: 130 },
-    { field: 'returnDate', headerName: 'Return', width: 130 },
-    { field: 'bookingStatus', headerName: 'Status', width: 130 },
-    { field: 'createdAt', headerName: 'Created At', width: 180 }
-  ];
+  
 
   const datePickerProps = {
     slotProps: {
@@ -271,20 +241,7 @@ const FlightBookingForm = () => {
         </Grid>
 
         {/* Booking History */}
-        <Box sx={{ height: 400, width: '100%', mt: 4 }}>
-          <Typography variant="h6" gutterBottom>
-            Booking History
-          </Typography>
-          <DataGrid
-            rows={bookings}
-            columns={columns}
-            pageSize={5}
-            rowsPerPageOptions={[5]}
-            checkboxSelection
-            disableSelectionOnClick
-            loading={loading}
-          />
-        </Box>
+        
       </Paper>
     </Container>
   );

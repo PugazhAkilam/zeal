@@ -135,12 +135,16 @@ const AuthPage = () => {
         login(data.user);
         
         // Redirect based on user type
-        if (data.user.userType === 3) {
-          navigate('/admin');
-        } else if (data.user.userType === 2) {
+        if (data.user.userType === 1) {
           navigate('/superadmin');
-        } else {
-          navigate('/anchor');
+        } else if (data.user.userType === 2) {
+          navigate('/admin');
+
+        } 
+        else if (data.user.userType === 3) {
+          navigate('/admin')
+        }else {
+          navigate('/401');
         }
         
         alert('Login successful!');

@@ -55,11 +55,11 @@ export const AuthProvider = ({ children }) => {
     if (!user) return;
     
     if (user.userType === 3) {
-      navigate('/admin');
-    } else if (user.userType === 2) {
-      navigate('/superadmin');
-    } else if (user.userType === 1) {
       navigate('/anchor');
+    } else if (user.userType === 1) {
+      navigate('/superadmin');
+    } else if (user.userType === 2) {
+      navigate('/admin');
     }
   };
 

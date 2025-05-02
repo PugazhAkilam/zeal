@@ -8,8 +8,8 @@ import VisaPocess from './components/VisaPocess';
 import Navbar from './pages/Navbar';
 import AuthPage from './pages/AuthPage';
 import AdminLayout from './components/admin/AdminLayout';
-import SuperAdminLayout from './components/superadmin/SuperAdminLayout';
-import AnchorLayout from './components/anchor/AnchorLayout';
+//import SuperAdminLayout from './components/superadmin/SuperAdminLayout';
+//import AnchorLayout from './components/anchor/AnchorLayout';
 import WelcomeDashboard from './components/admin/welcomedashboard';
 import ProfilePage from './pages/ProfilePage';
 import { AuthProvider } from './context/AuthContext';
@@ -21,7 +21,7 @@ const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
   
   // if (loading) {
-  //   return <div>Loading...</div>;
+  //   return <div></div>;
   // }
   
   if (!isAuthenticated) {
@@ -58,9 +58,10 @@ function App() {
           {/* Super Admin Routes */}
           <Route path="/superadmin" element={
             // <ProtectedRoute>
-              <SuperAdminLayout />
+            <AdminLayout />
             // </ProtectedRoute>
           }>
+            <Route index element={<WelcomeDashboard />} />
             <Route path="flight" element={<FlightBookingForm />} />
             <Route path="hotel" element={<HotelBooking />} />
             <Route path="travel" element={<TravelPackage />} />
@@ -70,9 +71,10 @@ function App() {
           {/* Anchor Routes */}
           <Route path="/anchor" element={
             <ProtectedRoute>
-              <AnchorLayout />
+               <AdminLayout />
             </ProtectedRoute>
           }>
+            <Route index element={<WelcomeDashboard />} />
             <Route path="flight" element={<FlightBookingForm />} />
             <Route path="hotel" element={<HotelBooking />} />
             <Route path="travel" element={<TravelPackage />} />
