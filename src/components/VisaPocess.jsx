@@ -47,40 +47,57 @@ function VisaPocess() {
     setCountries(typeof value === 'string' ? value.split(',') : value);
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const countrie = countries.join(", "); 
-    // Prepare the form data to match the backend API format
-    const formData = {
-      countrie,           // e.g. 'USA, Canada'
-      visaType,            // e.g. 'Tourist'
-      travelDate,          // Date object, or string (ISO format)
-      adults,              // Number of adults
-      children,            // Number of children
-      infants,             // Number of infants
-      childrenAges,        // Comma-separated ages (e.g. '4,7,12')
-      mobileNumber,        // Phone number
-      visaStatus,          // Visa status (e.g. 'Pending', 'Approved')
-      remarks              // Any additional remarks (string)
-    };
+  const handleSubmit = async (event) => {
+      event.preventDefault();
+      const countrie = countries.join(", "); 
+      
+      const formData = {
+        countrie,
+        visaType,
+        travelDate: travelDate?.format('YYYY-MM-DD'),
+        adults,
+        children,
+        infants,
+        childrenAges,
+        mobileNumber,
+        visaStatus,
+        remarks
+      };
   
-    console.log('Form submitted:', formData);
+      try {
+        const response = await axios.post('http://localhost:5000/api/visa/bookings', formData, {
+          withCredentials: true
+        });
   
-    // Now, send the form data to the backend
-    // Example using Axios or Fetch for API call
+        if (response.data.success) {
+          // Reset form fields
+          setCountries([]);
+          setVisaType('');
+          setTravelDate(null);
+          setAdults(1);
+          setChildren(0);
+          setInfants(0);
+          setChildrenAges('');
+          setMobileNumber('');
+          setVisaStatus('');
+          setRemarks('');
   
-    axios.post('http://localhost:5000/api/visa/bookings', formData,{
-      withCredentials: true,
-    })
-      .then((response) => {
-        console.log('Visa booking created:', response.data);
-        // Handle success (e.g., show a confirmation message, clear form, etc.)
-      })
-      .catch((error) => {
+          // Show success message
+          alert('Visa booking created successfully!');
+        }
+      } catch (error) {
         console.error('Error submitting visa booking:', error);
-        // Handle error (e.g., show error message)
-      });
-  };
+        // Show validation errors if any
+        if (error.response?.data?.errors) {
+          const errorMessages = error.response.data.errors
+            .map(err => err.msg)
+            .join('\n');
+          alert(`Validation errors:\n${errorMessages}`);
+        } else {
+          alert('Failed to book visa. Please try again.');
+        }
+      }
+    };
   
 
   return (

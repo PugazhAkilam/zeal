@@ -70,7 +70,7 @@ const WelcomeDashboard = () => {
   return (
     <Box sx={{ flexGrow: 1, p: 4 }}>
       <Typography variant="h4" sx={{ mb: 3 }}>
-        Welcome, {user?.name}!
+        Welcome, {user?.name}...!
       </Typography>
 
       {/* Cards Section */}

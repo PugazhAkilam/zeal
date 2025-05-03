@@ -413,13 +413,7 @@ const travelCountriesColumn = {
   field: 'Countries',
   headerName: 'Countries',
   width: 200,
-  valueFormatter: (params) => {
-    try {
-      return JSON.parse(params.value).join(', ');
-    } catch {
-      return params.value;
-    }
-  }
+   renderCell: (params) => params.value || 'NUll'
 };
 
 // Visa Specific
@@ -545,6 +539,15 @@ const TravelDate = {
     fetchBookings();
   };
 
+  const handleClear = () => {
+    setBookingType('all');
+    setStartDate(null);
+    setEndDate(null);
+    setSearchQuery('');
+    fetchBookings(); // This will fetch with current bookingType since we're not changing it
+    
+   
+  };
   return (
     <Box sx={{ width: '100%', p: 2 }}>
       <Stack spacing={2}>
@@ -577,14 +580,18 @@ const TravelDate = {
             />
           </LocalizationProvider>
 
-          <TextField
+          {/* <TextField
             label="Search by Mobile/User Code"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-          />
+          /> */}
+           
 
           <Button variant="contained" onClick={handleSearch}>
             Search
+          </Button>
+          <Button variant='outlined' onClick={handleClear} title="Double click to clear dates and refresh data">
+            Clear Date
           </Button>
         </Box>
 
@@ -593,11 +600,25 @@ const TravelDate = {
           columns={getColumnsForSourceType(bookingType)}
           pageSize={10}
           rowsPerPageOptions={[10, 25, 50]}
-          checkboxSelection
-          disableSelectionOnClick
           autoHeight
           loading={loading}
           getRowId={(row) => row.UniqueId}
+          sx={{
+            '& .MuiDataGrid-cell': {
+              borderRight: '1px solid #e0e0e0',
+              borderBottom: '1px solid #e0e0e0'
+            },
+            '& .MuiDataGrid-columnHeader': {
+              borderRight: '1px solid #e0e0e0',
+              borderBottom: '2px solid #e0e0e0',
+              backgroundColor: '#1976d2',
+              color: 'white'
+            },
+            '& .MuiDataGrid-columnHeaders': {
+              backgroundColor: '#1976d2',
+              color: 'white'
+            }
+          }}
         />
       </Stack>
     </Box>

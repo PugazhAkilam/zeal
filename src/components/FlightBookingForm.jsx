@@ -12,7 +12,7 @@ const FlightBookingForm = () => {
   const [segment2Date, setSegment2Date] = useState(null);
   const [segment3Date, setSegment3Date] = useState(null);
  const [fareType, setFareType] = useState('Normal');
-  const [adults, setAdults] = useState(1);
+  const [adults, setAdults] = useState(0);
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
   const [childrenAge, setChildrenAge] = useState('');
@@ -40,14 +40,43 @@ const FlightBookingForm = () => {
         remarks: document.querySelector('[name="remarks"]')?.value || ''
       };
 
-      // Include credentials to send cookies
-      await axios.post('http://localhost:5000/api/flight/bookings', bookingData, {
-        withCredentials: true // This enables sending cookies
+      const response = await axios.post('http://localhost:5000/api/flight/bookings', bookingData, {
+        withCredentials: true
       });
       
-      fetchBookings();
+      if (response.data.success) {
+        // Reset form fields to default values after successful submission
+        setTripType('Single');
+        setFareType('Normal');
+        setDepartureDate(null);
+        setReturnDate(null);
+        setSegment1Date(null);
+        setSegment2Date(null);
+        setSegment3Date(null);
+        setAdults(0);
+        setChildren(0);
+        setInfants(0);
+        setChildrenAge('');
+        setMobileNumber('');
+        setBookingStatus('Pending');
+        // Reset remarks field
+        const remarksField = document.querySelector('[name="remarks"]');
+        if (remarksField) remarksField.value = '';
+        
+        // Show success message
+        alert('Booking created successfully!');
+      }
     } catch (error) {
       console.error('Error creating booking:', error);
+      // Show validation errors if any
+      if (error.response?.data?.errors) {
+        const errorMessages = error.response.data.errors
+          .map(err => err.msg)
+          .join('\n');
+        alert(`Validation errors:\n${errorMessages}`);
+      } else {
+        alert('An error occurred while creating the booking');
+      }
     }
   };
 
@@ -94,8 +123,8 @@ const FlightBookingForm = () => {
                 label="Fare Type"
               >
                 <MenuItem value="Normal">Normal</MenuItem>
-                <MenuItem value="Economy">Economy</MenuItem>
-                <MenuItem value="Business">Business</MenuItem>
+                <MenuItem value="Refundable">Refundable</MenuItem>
+                <MenuItem value="Non-Refundable">Non-Refundable</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -167,11 +196,11 @@ const FlightBookingForm = () => {
                 value={label === 'Adults' ? adults : label === 'Children' ? children : infants}
                 onChange={(e) => {
                   const value = parseInt(e.target.value) || 0;
-                  if (label === 'Adults') setAdults(Math.max(1, value));
+                  if (label === 'Adults') setAdults(Math.max(0, value));
                   else if (label === 'Children') setChildren(Math.max(0, value));
                   else setInfants(Math.max(0, value));
                 }}
-                type="number"
+                type="text"
                 fullWidth
               />
             </Grid>

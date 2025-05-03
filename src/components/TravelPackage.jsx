@@ -71,14 +71,43 @@ function TravelPackage() {
         remarks
       };
   
-      await axios.post('http://localhost:5000/api/travel-package/bookings', payload, {
+      const response = await axios.post('http://localhost:5000/api/travel-package/bookings', payload, {
         withCredentials: true
       });
-      
-      alert('Travel package booked successfully!');
+
+      if (response.data.success) {
+        // Reset all form fields to default values
+        setPackageType('Domestic');
+        setCheckInDate(null);
+        setCheckOutDate(null);
+        setSelectedCountries([]);
+        setSelectedCity('Delhi');
+        setHotelName('');
+        setHotelRating(5);
+        setAdults(1);
+        setChildren(0);
+        setInfants(0);
+        setChildrenAges('');
+        setBudget('');
+        setMobile(0);
+        setMealPlan('EP');
+        setBookingStatus('Pending');
+        setRemarks('');
+        
+        // Show success message
+        alert('Travel package booked successfully!');
+      }
     } catch (error) {
       console.error('Booking error:', error);
-      alert('Failed to book travel package');
+      // Show validation errors if any
+      if (error.response?.data?.errors) {
+        const errorMessages = error.response.data.errors
+          .map(err => err.msg)
+          .join('\n');
+        alert(`Validation errors:\n${errorMessages}`);
+      } else {
+        alert('Failed to book travel package. Please try again.');
+      }
     }
   };
   return (

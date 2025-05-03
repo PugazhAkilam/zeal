@@ -11,13 +11,9 @@ const countryData = {
   USA: ['New York', 'Los Angeles', 'Chicago', 'Miami', 'Las Vegas'],
   UK: ['London', 'Manchester', 'Birmingham', 'Edinburgh', 'Glasgow'],
   UAE: ['Dubai', 'Abu Dhabi', 'Sharjah', 'Ajman', 'Ras Al Khaimah'],
-  // Singapore: ['Singapore City'],
-  // Thailand: ['Bangkok', 'Phuket', 'Pattaya', 'Chiang Mai', 'Krabi'],
-  // Malaysia: ['Kuala Lumpur', 'Penang', 'Langkawi', 'Johor Bahru', 'Malacca'],
-  // Indonesia: ['Bali', 'Jakarta', 'Lombok', 'Yogyakarta', 'Bandung'],
+ 
   France: ['Paris', 'Nice', 'Lyon', 'Marseille', 'Bordeaux']
-  // Italy: ['Rome', 'Venice', 'Florence', 'Milan', 'Naples'],
-  // Spain: ['Barcelona', 'Madrid', 'Seville', 'Valencia', 'Malaga']
+ 
 };
 
 // Indian cities for domestic bookings
@@ -63,7 +59,7 @@ function HotelBooking() {
       hotel_name: hotelName,
       hotel_star_rating: parseInt(hotelStarRating),
       adults: parseInt(adults),
-      children: parseInt(children),
+      children:children,
       infants: parseInt(infants),
       age_of_children: ageOfChildren,
       budget_range: budgetRange,
@@ -73,17 +69,42 @@ function HotelBooking() {
     };
   
     try {
-      await axios.post('http://localhost:5000/api/hotel/bookings', payload, {
-        withCredentials: true // This enables sending cookies
+      const response = await axios.post('http://localhost:5000/api/hotel/bookings', payload, {
+        withCredentials: true
       });
-     // const token = localStorage.getItem('token'); // assuming your auth token is stored
-      // const response = await axios.post('/api/hotel/bookings', payload, {
-      //   headers: { Authorization: `Bearer ${token}` }
-      // });
-      //alert('Hotel booked successfully! Booking ID: ' + response.data.bookingId);
+
+      if (response.data.success) {
+        // Reset all form fields to default values
+        setBookingType('Domestic');
+        setSelectedCountry('');
+        setSelectedCity(indianCities[0]);
+        setCheckInDate(null);
+        setCheckOutDate(null);
+        setHotelName('');
+        setHotelStarRating(5);
+        setAdults(1);
+        setChildren(0);
+        setInfants(0);
+        setAgeOfChildren('');
+        setBudgetRange('');
+        setMealPlan('EP');
+        setBookingStatus('Pending');
+        setRemarks('');
+        
+        // Show success message
+        alert('Hotel booking created successfully!');
+      }
     } catch (error) {
       console.error('Error booking hotel:', error);
-      alert('Failed to book hotel.');
+      // Show validation errors if any
+      if (error.response?.data?.errors) {
+        const errorMessages = error.response.data.errors
+          .map(err => err.msg)
+          .join('\n');
+        alert(`Validation errors:\n${errorMessages}`);
+      } else {
+        alert('Failed to book hotel. Please try again.');
+      }
     }
   };
   
