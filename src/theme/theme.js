@@ -5,7 +5,7 @@ export const lightTheme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#1976d2',
+      main: 'rgb(10, 77, 201)',
     },
     background: {
       default: '#f5f5f5',
@@ -20,7 +20,7 @@ export const darkTheme = createTheme({
     palette: {
       mode: 'dark',
       primary: {
-        main: '#03fc52',
+        main: 'rgb(96, 152, 255)',
       },
       background: {
         default: '#121212',
@@ -35,7 +35,7 @@ export const darkTheme = createTheme({
       MuiCssBaseline: {
         styleOverrides: `
           body {
-            background-color: #121212;
+            background-color:rgb(32, 32, 32);
             color: #ffffff;
             min-height: 100vh;
           }

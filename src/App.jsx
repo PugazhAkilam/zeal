@@ -20,9 +20,9 @@ import FormTable from './components/admin/FormTable';
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
   
-  // if (loading) {
-  //   return <div></div>;
-  // }
+  if (loading) {
+    return <div></div>;
+  }
   
   if (!isAuthenticated) {
     return <Navigate to="/401" />;
@@ -42,17 +42,26 @@ function App() {
           
           {/* Admin Routes */}
           <Route path="/admin" element={
-            <ProtectedRoute>
+          
               <AdminLayout />
-            </ProtectedRoute>
+          
           }>
-            <Route index element={<WelcomeDashboard />} />
-            <Route path="flight" element={<FlightBookingForm />} />
-            <Route path="hotel" element={<HotelBooking />} />
-            <Route path="travel" element={<TravelPackage />} />
-            <Route path="visa" element={<VisaPocess />} />
-            <Route path="profile" element={<ProfilePage />} />
-            <Route path="table" element={<FormTable />} />
+            <Route index element={  <ProtectedRoute><WelcomeDashboard /></ProtectedRoute>} />
+            <Route path="flight" element={
+              <ProtectedRoute><FlightBookingForm />
+                </ProtectedRoute>} />
+            <Route path="hotel" element={<ProtectedRoute><HotelBooking />
+              </ProtectedRoute>} />
+            <Route path="travel" element={<ProtectedRoute><TravelPackage />
+              </ProtectedRoute>} />
+            <Route path="visa" element={<ProtectedRoute><VisaPocess />
+              </ProtectedRoute>} />
+            <Route path="profile" element={<ProtectedRoute><ProfilePage />
+              </ProtectedRoute>} />
+            <Route path="table" 
+            element={
+              <ProtectedRoute><FormTable />
+                </ProtectedRoute>} />
           </Route>
 
           {/* Super Admin Routes */}
@@ -61,24 +70,46 @@ function App() {
             <AdminLayout />
             // </ProtectedRoute>
           }>
-            <Route index element={<WelcomeDashboard />} />
-            <Route path="flight" element={<FlightBookingForm />} />
-            <Route path="hotel" element={<HotelBooking />} />
-            <Route path="travel" element={<TravelPackage />} />
-            <Route path="visa" element={<VisaPocess />} />
+              <Route index element={  <ProtectedRoute><WelcomeDashboard /></ProtectedRoute>} />
+            <Route path="flight" element={
+              <ProtectedRoute><FlightBookingForm />
+                </ProtectedRoute>} />
+            <Route path="hotel" element={<ProtectedRoute><HotelBooking />
+              </ProtectedRoute>} />
+            <Route path="travel" element={<ProtectedRoute><TravelPackage />
+              </ProtectedRoute>} />
+            <Route path="visa" element={<ProtectedRoute><VisaPocess />
+              </ProtectedRoute>} />
+            <Route path="profile" element={<ProtectedRoute><ProfilePage />
+              </ProtectedRoute>} />
+            <Route path="table" 
+            element={
+              <ProtectedRoute><FormTable />
+                </ProtectedRoute>} />
           </Route>
 
           {/* Anchor Routes */}
           <Route path="/anchor" element={
-            <ProtectedRoute>
+          
                <AdminLayout />
-            </ProtectedRoute>
+            
           }>
-            <Route index element={<WelcomeDashboard />} />
-            <Route path="flight" element={<FlightBookingForm />} />
-            <Route path="hotel" element={<HotelBooking />} />
-            <Route path="travel" element={<TravelPackage />} />
-            <Route path="visa" element={<VisaPocess />} />
+               <Route index element={  <ProtectedRoute><WelcomeDashboard /></ProtectedRoute>} />
+            <Route path="flight" element={
+              <ProtectedRoute><FlightBookingForm />
+                </ProtectedRoute>} />
+            <Route path="hotel" element={<ProtectedRoute><HotelBooking />
+              </ProtectedRoute>} />
+            <Route path="travel" element={<ProtectedRoute><TravelPackage />
+              </ProtectedRoute>} />
+            <Route path="visa" element={<ProtectedRoute><VisaPocess />
+              </ProtectedRoute>} />
+            <Route path="profile" element={<ProtectedRoute><ProfilePage />
+              </ProtectedRoute>} />
+            <Route path="table" 
+            element={
+              <ProtectedRoute><FormTable />
+                </ProtectedRoute>} />
           </Route>
           <Route path="*" element={<NotFound />} />
           

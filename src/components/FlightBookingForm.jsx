@@ -4,6 +4,9 @@ import { Box, Button, Typography, Grid, TextField, Container, Paper, FormControl
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+const apiUrl=import.meta.env.VITE_API_URL;
 const FlightBookingForm = () => {
   const [tripType, setTripType] = useState('Single');
   const [departureDate, setDepartureDate] = useState(null);
@@ -12,7 +15,7 @@ const FlightBookingForm = () => {
   const [segment2Date, setSegment2Date] = useState(null);
   const [segment3Date, setSegment3Date] = useState(null);
  const [fareType, setFareType] = useState('Normal');
-  const [adults, setAdults] = useState(0);
+  const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
   const [childrenAge, setChildrenAge] = useState('');
@@ -40,31 +43,44 @@ const FlightBookingForm = () => {
         remarks: document.querySelector('[name="remarks"]')?.value || ''
       };
 
-      const response = await axios.post('http://localhost:5000/api/flight/bookings', bookingData, {
-        withCredentials: true
-      });
-      
-      if (response.data.success) {
-        // Reset form fields to default values after successful submission
-        setTripType('Single');
-        setFareType('Normal');
-        setDepartureDate(null);
-        setReturnDate(null);
-        setSegment1Date(null);
-        setSegment2Date(null);
-        setSegment3Date(null);
-        setAdults(0);
-        setChildren(0);
-        setInfants(0);
-        setChildrenAge('');
-        setMobileNumber('');
-        setBookingStatus('Pending');
-        // Reset remarks field
-        const remarksField = document.querySelector('[name="remarks"]');
-        if (remarksField) remarksField.value = '';
+      // In the handleSubmit function:
+      try {
+        const response = await axios.post(`${apiUrl}/flight/bookings`, bookingData, {
+          withCredentials: true
+        });
         
-        // Show success message
-        alert('Booking created successfully!');
+        if (response.data.success) {
+          // Reset form fields to default values after successful submission
+          setTripType('Single');
+          setFareType('Normal');
+          setDepartureDate(null);
+          setReturnDate(null);
+          setSegment1Date(null);
+          setSegment2Date(null);
+          setSegment3Date(null);
+          setAdults(0);
+          setChildren(0);
+          setInfants(0);
+          setChildrenAge('');
+          setMobileNumber('');
+          setBookingStatus('Pending');
+          // Reset remarks field
+          const remarksField = document.querySelector('[name="remarks"]');
+          if (remarksField) remarksField.value = '';
+          
+          // Show success message
+          toast.success('Booking created successfully!');
+        }
+      } catch (error) {
+        console.error('Error creating booking:', error);
+        if (error.response?.data?.errors) {
+          const errorMessages = error.response.data.errors
+            .map(err => err.msg)
+            .join('\n');
+          toast.error(`Validation errors:\n${errorMessages}`);
+        } else {
+          toast.error('An error occurred while creating the booking');
+        }
       }
     } catch (error) {
       console.error('Error creating booking:', error);
@@ -237,8 +253,8 @@ const FlightBookingForm = () => {
                 label="Booking Status"
               >
                 <MenuItem value="Pending">Pending</MenuItem>
-                <MenuItem value="Cancelled">InProgress</MenuItem>
-                <MenuItem value="Confirmed">Completed</MenuItem>
+                <MenuItem value="InProgress">InProgress</MenuItem>
+                <MenuItem value="Completed">Completed</MenuItem>
               </Select>
             </FormControl>
           </Grid>

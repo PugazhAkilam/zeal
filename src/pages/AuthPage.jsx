@@ -8,11 +8,13 @@ import { useNavigate } from 'react-router-dom';
 
 // Add this import
 import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-toastify';
+const apiUrl=import.meta.env.VITE_API_URL;
 
 const AuthPage = () => {
   // Add this line
   const { login } = useAuth();
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -50,10 +52,10 @@ const AuthPage = () => {
     try {
       if (isLogin) {
         // Log email when Send OTP button is clicked
-        console.log("Send OTP button clicked - Email:", formData.email);
+        //console.log("Send OTP button clicked - Email:", formData.email);
         
         // Call API to send OTP
-        const response = await fetch('http://localhost:5000/api/auth/send-otp', {
+        const response = await fetch(`${apiUrl}/auth/send-otp`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -66,19 +68,19 @@ const AuthPage = () => {
         
         if (data.success) {
           setShowOTP(true);
-          alert('OTP sent to your email');
+          toast.success('OTP sent to your email');
         } else {
-          alert(data.message || 'Failed to send OTP');
+          toast.error(data.message || 'Failed to send OTP');
         }
       } else {
         // Log name, email, dob, mobile when Register button is clicked
-        console.log("Register button clicked - Name:", formData.name);
-        console.log("Register button clicked - Email:", formData.email);
-        console.log("Register button clicked - DOB:", formData.dob);
-        console.log("Register button clicked - Mobile:", formData.mobile);
+       // console.log("Register button clicked - Name:", formData.name);
+      //  console.log("Register button clicked - Email:", formData.email);
+       // console.log("Register button clicked - DOB:", formData.dob);
+       // console.log("Register button clicked - Mobile:", formData.mobile);
         
         // Call API to register user
-        const response = await fetch('http://localhost:5000/api/auth/register', {
+        const response = await fetch(`${apiUrl}/auth/register`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -95,14 +97,14 @@ const AuthPage = () => {
         
         if (data.success) {
           setShowOTP(true);
-          alert('Registration successful! OTP sent to your email');
+          toast.success('Registration successful! OTP sent to your email');
         } else {
-          alert(data.message || 'Registration failed');
+          toast.error(data.message || 'Registration failed');
         }
       }
     } catch (error) {
-      console.error('Authentication error:', error);
-      alert('An error occurred during authentication');
+    //  console.error('Authentication error:', error);
+    toast.error('An error occurred during authentication');
     }
   };
   
@@ -111,11 +113,11 @@ const AuthPage = () => {
     
     try {
       // Log email and OTP as a string when Login button is clicked
-      console.log("Login button clicked - Email:", formData.email);
-      console.log("Login button clicked - OTP:", formData.otp.join(''));
+    //  console.log("Login button clicked - Email:", formData.email);
+    //  console.log("Login button clicked - OTP:", formData.otp.join(''));
       
       // Call API to verify OTP
-      const response = await fetch('http://localhost:5000/api/auth/verify-otp', {
+      const response = await fetch(`${apiUrl}/auth/verify-otp`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -142,22 +144,22 @@ const AuthPage = () => {
 
         } 
         else if (data.user.userType === 3) {
-          navigate('/admin')
+          navigate('/anchor')
         }else {
           navigate('/401');
         }
         
-        alert('Login successful!');
+        toast.success('Login successful!');
       } else {
-        alert(data.message || 'Invalid OTP');
+        toast.error(data.message || 'Invalid OTP');
       }
     } catch (error) {
       console.error('Login error:', error);
-      alert('An error occurred during login');
+      toast.error('An error occurred during login');
     }
   };
   return (
-    <> <Button onClick={()=>navigate('/admin')}>admin</Button>   <Button onClick={()=>navigate('/superadmin')}>super admin</Button>   <Button onClick={()=>navigate('/anchor')}>anchor</Button> 
+    
     <Box sx={{
         minHeight: '100vh',
   
@@ -176,7 +178,7 @@ const AuthPage = () => {
      
     p: 4,
     borderRadius: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+    // backgroundColor: 'rgba(255, 255, 255, 0.6)',
     backdropFilter: 'blur(10px)',
     // color: '#fff',
     boxShadow: 5,
@@ -338,7 +340,7 @@ const AuthPage = () => {
           
         </Box>
       </Box>  
-    </Box></>
+    </Box>
   );
 };
 

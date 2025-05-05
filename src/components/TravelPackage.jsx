@@ -4,6 +4,9 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+const apiUrl=import.meta.env.VITE_API_URL;
 
 const countryData = {
   USA: ['New York', 'Los Angeles', 'Chicago', 'Miami', 'Las Vegas'],
@@ -39,7 +42,7 @@ function TravelPackage() {
   const [infants, setInfants] = useState(0);
   const [childrenAges, setChildrenAges] = useState("");
   const [budget, setBudget] = useState('');
-  const [mobile, setMobile] = useState(0);
+  const [mobile, setMobile] = useState('');
   const [mealPlan, setMealPlan] = useState('EP'); // default value
   const [bookingStatus, setBookingStatus] = useState('Pending'); // default value
   const [remarks, setRemarks] = useState('');
@@ -71,7 +74,7 @@ function TravelPackage() {
         remarks
       };
   
-      const response = await axios.post('http://localhost:5000/api/travel-package/bookings', payload, {
+      const response = await axios.post(`${apiUrl}/travel-package/bookings`, payload, {
         withCredentials: true
       });
 
@@ -95,7 +98,7 @@ function TravelPackage() {
         setRemarks('');
         
         // Show success message
-        alert('Travel package booked successfully!');
+        toast.success('Travel package booked successfully!');
       }
     } catch (error) {
       console.error('Booking error:', error);
@@ -104,9 +107,9 @@ function TravelPackage() {
         const errorMessages = error.response.data.errors
           .map(err => err.msg)
           .join('\n');
-        alert(`Validation errors:\n${errorMessages}`);
+          toast.error(errorMessages);
       } else {
-        alert('Failed to book travel package. Please try again.');
+        toast.error('Failed to book travel package. Please try again.');
       }
     }
   };
@@ -228,38 +231,28 @@ function TravelPackage() {
               </Select>
             </FormControl>
           </Grid>
-
+          <Typography variant="subtitle1" sx={{ mt: 2,ml:2 ,mb:2}}>
+          Number of Passengers
+        </Typography>
          
-  <Grid item xs={12} sm={4}>
-    <TextField
-      label="Adults"
-      value={adults}
-      type="number"
-      onChange={(e) => setAdults(e.target.value)}
-      margin="normal"
-      fullWidth
-    />
-  </Grid>
-  <Grid item xs={12} sm={4}>
-    <TextField
-      label="Children"
-      value={children}
-      type="number"
-      onChange={(e) => setChildren(e.target.value)}
-      margin="normal"
-      fullWidth
-    />
-  </Grid>
-  <Grid item xs={12} sm={4}>
-    <TextField
-      label="Infants"
-      value={infants}
-      type="number"
-      onChange={(e) => setInfants(e.target.value)}
-      margin="normal"
-      fullWidth
-    />
-  </Grid>
+          <Grid container spacing={2}>
+          {['Adults', 'Children', 'Infants'].map((label, index) => (
+            <Grid item xs={3} sx={{ml:2}} key={index}>
+              <TextField
+                label={label}
+                value={label === 'Adults' ? adults : label === 'Children' ? children : infants}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value) || 0;
+                  if (label === 'Adults') setAdults(Math.max(0, value));
+                  else if (label === 'Children') setChildren(Math.max(0, value));
+                  else setInfants(Math.max(0, value));
+                }}
+                type="text"
+                fullWidth
+              />
+            </Grid>
+          ))}
+        </Grid>
 
 
 
@@ -293,6 +286,7 @@ function TravelPackage() {
       label="Mobile Number"
       placeholder="+1 234 567 8901"
       margin="normal"
+    type="tel"
     value={mobile}
     onChange={(e) => setMobile(e.target.value)}
     />

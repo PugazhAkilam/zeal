@@ -31,7 +31,7 @@ const Footer = () => {
           }}
         >
           <Typography variant="body2" align="center">
-            © {currentYear} ZEAL Airways. All rights reserved.
+            © {currentYear} made with 💗 by Akilam Technology for a better web Application. <a href='https://www.akilamtechnology.com/OurProducts' style={{color:"pink"}} >View Site</a>
           </Typography>
           
           <Box sx={{ display: 'flex', gap: 1 }}>

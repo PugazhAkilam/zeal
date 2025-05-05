@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-
+const apiUrl=import.meta.env.VITE_API_URL;
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
         setLoading(true);
         setError(null);
         
-        const response = await fetch('http://localhost:5000/api/auth/me', {
+        const response = await fetch(`${apiUrl}/auth/me`, {
           credentials: 'include',
           headers: {
             'Accept': 'application/json',
@@ -73,7 +73,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5000/api/auth/logout', {
+      const response = await fetch(`${apiUrl}/auth/logout`, {
         method: 'POST',
         credentials: 'include'
       });
@@ -103,7 +103,7 @@ export const AuthProvider = ({ children }) => {
         return user;
       }
 
-      const response = await fetch('http://localhost:5000/api/auth/me', {
+      const response = await fetch(`${apiUrl}/auth/me`, {
         method: 'GET',
         credentials: 'include',
         headers: {

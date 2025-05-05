@@ -5,7 +5,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import axios from 'axios';
-
+const apiUrl=import.meta.env.VITE_API_URL;
 const FormTable = () => {
   const [bookingType, setBookingType] = useState('all');
   const [startDate, setStartDate] = useState(null);
@@ -13,149 +13,6 @@ const FormTable = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
-
-//   const getColumnsForSourceType = (sourceType) => {
-//     const commonColumns = [
-//       { 
-//         field: 'index',
-//         headerName: 'S.No', 
-//         width: 100,
-//         renderCell: (params) => {
-//           return rows.indexOf(params.row) + 1;
-//         }
-//       },
-//       { 
-//         field: 'SourceType', 
-//         headerName: 'Booking Type', 
-//         width: 130,
-        
-//       },
-//       {
-//         field: 'MobileNumber',
-//         headerName: 'Mobile',
-//         width: 130,
-//         renderCell: (params) => {
-//           return params.value && params.value.trim() !== '' 
-//             ? params.value 
-//             : 'NUll';
-//         }
-//       }
-// ,      
-//       { field: 'UserCode', headerName: 'User Code', width: 130,renderCell: (params) => {
-//         return params.value && params.value.trim() !== '' 
-//           ? params.value 
-//           : 'NUll';
-//       } },
-//       {
-//         field: 'CreatedOn', 
-//         headerName: 'Created Date', 
-//         width: 150,
-//         renderCell: (params) => {
-//           const value = params.row.CreatedOn;
-//           if (!value) return '';
-//           try {
-//             const date = new Date(value);
-//             return date.toLocaleString('en-US', {
-//               year: 'numeric',
-//               month: '2-digit',
-//               day: '2-digit',
-           
-//             });
-//           } catch {
-//             return value;
-//           }
-//         }
-//       },
-//       { field: 'BookingStatus', headerName: 'BookingStatus', width: 200,renderCell: (params) => {
-//         return params.value 
-//           ? params.value 
-//           : 'NUll';
-//       } }    ,
-//       { field: 'Budget', headerName: 'Budget', width: 200,renderCell: (params) => {
-//         return params.value  
-//           ? params.value 
-//           : 'NUll';
-//       } }    ,
-
-//        { field: 'Adults', headerName: 'Adults', width: 200 ,renderCell: (params) => {
-//         return params.value  
-//           ? params.value 
-//           : 'NUll';
-//       }}    ,
-//       { field: 'Children', headerName: 'Children', width: 200,renderCell: (params) => {
-//         return params.value 
-//           ? params.value 
-//           : 'NUll';
-//       } }    ,
-//       { field: 'Infants', headerName: 'Infants', width: 200,renderCell: (params) => {
-//         return params.value 
-//           ? params.value 
-//           : 'NUll';
-//       } }    ,
-//        { field: 'ChildrenAges', headerName: 'ChildrenAges', width: 200,renderCell: (params) => {
-//         return params.value 
-//           ? params.value 
-//           : 'NUll';
-//       } }    ,
-//  { field: 'Remarks', headerName: 'Remarks', width: 200,renderCell: (params) => {
-//   return params.value 
-//     ? params.value 
-//     : 'NUll';
-// } }
-//     ];
-
-//     switch (sourceType) {
-//       case 'flight':
-//         return [
-//           ...commonColumns,
-//           { field: 'TripType', headerName: 'Trip Type', width: 130 },
-//           { field: 'FareType', headerName: 'Fare Type', width: 130 },
-//         //   { field: 'DepartureDate', headerName: 'Departure', width: 130,
-//         //     valueFormatter: (params) => params.value ? new Date(params.value).toLocaleDateString() : '' 
-//         //   },
-//         //   { field: 'ReturnDate', headerName: 'Return', width: 130,
-//         //     valueFormatter: (params) => params.value ? new Date(params.value).toLocaleDateString() : '' 
-//         //   }
-//         ];
-//       case 'hotel':
-//         return [
-//           ...commonColumns,
-//           { field: 'Countries', headerName: 'Country', width: 130 },
-//           { field: 'City', headerName: 'City', width: 130 },
-//           { field: 'HotelName', headerName: 'Hotel Name', width: 150 },
-//           { field: 'HotelRating', headerName: 'Rating', width: 100 },
-//         //   { field: 'CheckInDate', headerName: 'Check In', width: 130,
-//         //     valueFormatter: (params) => params.value ? new Date(params.value).toLocaleDateString() : '' 
-//         //   },
-//         //   { field: 'CheckOutDate', headerName: 'Check Out', width: 130,
-//         //     valueFormatter: (params) => params.value ? new Date(params.value).toLocaleDateString() : '' 
-//         //   }
-//         ];
-//       case 'travelpackage':
-//         return [
-//           ...commonColumns,
-//           { field: 'PackageType', headerName: 'Package Type', width: 130 },
-//           { field: 'Countries', headerName: 'Countries', width: 200,
-//             valueFormatter: (params) => {
-//               try {
-//                 return JSON.parse(params.value).join(', ');
-//               } catch {
-//                 return params.value;
-//               }
-//             }
-//           }
-//         ];
-//       case 'visa':
-//         return [
-//           ...commonColumns,
-//           { field: 'Countries', headerName: 'Countries', width: 200 },
-//           { field: 'VisaType', headerName: 'Visa Type', width: 130 }
-//         ];
-//       default:
-//         return commonColumns;
-//     }
-//   };
-
 
 const getColumnsForSourceType = (sourceType) => {
   // Common Columns
@@ -399,7 +256,8 @@ const hotelNameColumn = {
 const hotelRatingColumn = {
   field: 'HotelRating',
   headerName: 'Rating',
-  width: 100
+  width: 100,
+  renderCell: (params) => `${params.value} star` || 'NUll'
 };
 
 // Travel Package Specific
@@ -496,7 +354,7 @@ const TravelDate = {
     case 'travelpackage':
       return [ indexColumn,userCodeColumn, sourceTypeColumn , mobileColumn,packageTypeColumn, travelCountriesColumn, cityColumn,adultsColumn,
         childrenColumn,
-        infantsColumn,
+        infantsColumn,hotelRatingColumn,
         childrenAgesColumn,budgetColumn,checkInDateColumn,checkOutDateColumn,mealplanColumn, bookingStatusColumn,createdOnColumn,remarksColumn];
 
     case 'visa':
@@ -513,7 +371,7 @@ const TravelDate = {
   const fetchBookings = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://localhost:5000/api/bookings`, {
+      const response = await axios.get(`${apiUrl}/bookings`, {
         params: {
           sourceType: bookingType === 'all' ? undefined : bookingType,
           startDate: startDate?.toISOString(),

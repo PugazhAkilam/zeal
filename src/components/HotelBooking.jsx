@@ -4,7 +4,9 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import axios from 'axios';
-
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+const apiUrl=import.meta.env.VITE_API_URL;
 
 // Country and city data
 const countryData = {
@@ -31,7 +33,7 @@ function HotelBooking() {
   const [adults, setAdults] = useState(1);
   const [children, setChildren] = useState(0);
   const [infants, setInfants] = useState(0);
-  const [ageOfChildren, setAgeOfChildren] = useState('');
+  const [ageOfChildren, setAgeOfChildren] = useState("");
   const [budgetRange, setBudgetRange] = useState();
   const [mealPlan, setMealPlan] = useState('EP');
   const [bookingStatus, setBookingStatus] = useState('Pending');
@@ -69,7 +71,7 @@ function HotelBooking() {
     };
   
     try {
-      const response = await axios.post('http://localhost:5000/api/hotel/bookings', payload, {
+      const response = await axios.post(`${apiUrl}/hotel/bookings`, payload, {
         withCredentials: true
       });
 
@@ -92,7 +94,7 @@ function HotelBooking() {
         setRemarks('');
         
         // Show success message
-        alert('Hotel booking created successfully!');
+        toast.success('Hotel booking created successfully!');
       }
     } catch (error) {
       console.error('Error booking hotel:', error);
@@ -101,9 +103,9 @@ function HotelBooking() {
         const errorMessages = error.response.data.errors
           .map(err => err.msg)
           .join('\n');
-        alert(`Validation errors:\n${errorMessages}`);
+        toast.error(errorMessages);
       } else {
-        alert('Failed to book hotel. Please try again.');
+        toast.error('Failed to book hotel. Please try again.');
       }
     }
   };
@@ -244,38 +246,23 @@ function HotelBooking() {
           Number of Guests
         </Typography>
         <Grid container spacing={2}>
-  <Grid item xs={12} sm={4}>
-    <TextField
-      label="Adults"
-      value={adults}
-      type="number"
-      onChange={(e) => setAdults(e.target.value)}
-      margin="normal"
-      fullWidth
-    />
-  </Grid>
-  <Grid item xs={12} sm={4}>
-    <TextField
-      label="Children"
-      value={children}
-      type="number"
-      onChange={(e) => setChildren(e.target.value)}
-      margin="normal"
-      fullWidth
-    />
-  </Grid>
-  <Grid item xs={12} sm={4}>
-    <TextField
-      label="Infants"
-      value={infants}
-      type="number"
-      onChange={(e) => setInfants(e.target.value)}
-      margin="normal"
-      fullWidth
-    />
-  </Grid>
-</Grid>
-
+          {['Adults', 'Children', 'Infants'].map((label, index) => (
+            <Grid item xs={4} key={index}>
+              <TextField
+                label={label}
+                value={label === 'Adults' ? adults : label === 'Children' ? children : infants}
+                onChange={(e) => {
+                  const value = parseInt(e.target.value) || 0;
+                  if (label === 'Adults') setAdults(Math.max(0, value));
+                  else if (label === 'Children') setChildren(Math.max(0, value));
+                  else setInfants(Math.max(0, value));
+                }}
+                type="text"
+                fullWidth
+              />
+            </Grid>
+          ))}
+        </Grid>
 
         {/* Additional Details */}
         <Grid container spacing={2}>

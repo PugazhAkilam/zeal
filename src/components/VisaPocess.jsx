@@ -18,6 +18,9 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import axios from 'axios';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+const apiUrl=import.meta.env.VITE_API_URL;
 function VisaPocess() {
   const [countries, setCountries] = useState([]);
   const [visaType, setVisaType] = useState('');
@@ -65,7 +68,7 @@ function VisaPocess() {
       };
   
       try {
-        const response = await axios.post('http://localhost:5000/api/visa/bookings', formData, {
+        const response = await axios.post(`${apiUrl}/visa/bookings`, formData, {
           withCredentials: true
         });
   
@@ -83,7 +86,7 @@ function VisaPocess() {
           setRemarks('');
   
           // Show success message
-          alert('Visa booking created successfully!');
+          toast.success('Visa booking created successfully!');
         }
       } catch (error) {
         console.error('Error submitting visa booking:', error);
@@ -92,9 +95,9 @@ function VisaPocess() {
           const errorMessages = error.response.data.errors
             .map(err => err.msg)
             .join('\n');
-          alert(`Validation errors:\n${errorMessages}`);
+            toast.error(`Validation errors:\n${errorMessages}`);
         } else {
-          alert('Failed to book visa. Please try again.');
+          toast.error('Failed to book visa. Please try again.');
         }
       }
     };

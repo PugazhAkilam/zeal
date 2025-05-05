@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import { lightTheme, darkTheme } from './theme';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ThemeContext = createContext();
 
@@ -27,7 +29,12 @@ export const ThemeContextProvider = ({ children }) => {
   return (
     <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
       <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
-        <CssBaseline />
+        <CssBaseline  />
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          theme={isDarkMode ? 'dark' : 'light'}
+        />
         {children}
       </ThemeProvider>
     </ThemeContext.Provider>

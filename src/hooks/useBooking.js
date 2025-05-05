@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
+const apiUrl=import.meta.env.VITE_API_URL;
 
 export const useBooking = () => {
   const [chartData, setChartData] = useState({
@@ -20,7 +21,7 @@ export const useBooking = () => {
       }
       // Assuming you have a backend API to fetch booking data
         
-      const response = await axios.get('http://localhost:5000/api/bookings', {
+      const response = await axios.get(`${apiUrl}/bookings`, {
         withCredentials: true
       });
       

@@ -8,9 +8,6 @@ import LuggageIcon from '@mui/icons-material/Luggage';
 import VisaIcon from '@mui/icons-material/DocumentScanner';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import EmailIcon from '@mui/icons-material/Email';
-import ChatIcon from '@mui/icons-material/Chat';
 import { Outlet, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import  logo from '../../assets/logot.png';
 import { DarkModeSwitch } from 'react-toggle-dark-mode';
@@ -18,10 +15,12 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { Divider } from '@mui/material';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
+import Swal from 'sweetalert2';
 const drawerWidth = 240;
-
+import TableChartIcon from '@mui/icons-material/TableChart';
 import { useTheme } from '../../theme/ThemeContext';
-
+import { ClockIcon } from '@mui/x-date-pickers';
+const apiUrl=import.meta.env.VITE_API_URL;
 const AdminLayout = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { isDarkMode, toggleTheme } = useTheme();
@@ -41,7 +40,7 @@ const AdminLayout = () => {
         { text: 'Hotel', icon: <HotelIcon />, path: '/superadmin/hotel' },
         { text: 'Travel', icon: <LuggageIcon />, path: '/superadmin/travel' },
         { text: 'Visa', icon: <VisaIcon />, path: '/superadmin/visa' },
-        { text: 'Table', icon: <VisaIcon />, path: '/admin/table' },
+        { text: 'Table', icon: <TableChartIcon />, path: '/admin/table' },
       ];
     } else if (user?.userType === 2) {
       return [
@@ -50,7 +49,7 @@ const AdminLayout = () => {
         { text: 'Hotel', icon: <HotelIcon />, path: '/admin/hotel' },
         { text: 'Travel', icon: <LuggageIcon />, path: '/admin/travel' },
         { text: 'Visa', icon: <VisaIcon />, path: '/admin/visa' },
-        { text: 'Table', icon: <VisaIcon />, path: '/admin/table' },
+        { text: 'Table', icon: <TableChartIcon />, path: '/admin/table' },
       ];
     } else if (user?.userType === 3) {
       return [
@@ -59,7 +58,7 @@ const AdminLayout = () => {
         { text: 'Hotel', icon: <HotelIcon />, path: '/anchor/hotel' },
         { text: 'Travel', icon: <LuggageIcon />, path: '/anchor/travel' },
         { text: 'Visa', icon: <VisaIcon />, path: '/anchor/visa' },
-        { text: 'Table', icon: <VisaIcon />, path: '/admin/table' },
+        { text: 'Table', icon: <TableChartIcon />, path: '/admin/table' },
       ];
     }
     return []; // Return empty array if no user type matches
@@ -72,26 +71,46 @@ const AdminLayout = () => {
   };
 
   const handleLogout = async () => {
-    try {
-      // Logout API (make sure it clears the HttpOnly cookie)
-      //  await axios.get('http://localhost:5000/logout', { withCredentials: true });
-
-      // In your client code when calling logout
-fetch('http://localhost:5000/api/auth/logout', {
-  method: 'POST',
-  credentials: 'include'
-});
+    // Show confirmation dialog
+    const result = await Swal.fire({
+      title: 'Are you sure?',
+      text: "You will be logged out of your account!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, logout!'
+    });
   
-      // Redirect to login page
-      navigate('/login');
-    } catch (err) {
-      console.error('Logout error:', err);
+    // If user confirms
+    if (result.isConfirmed) {
+      try {
+        await fetch(`${apiUrl}/auth/logout`, {
+          method: 'POST',
+          credentials: 'include'
+        });
+        
+        Swal.fire(
+          'Logged Out!',
+          'You have been successfully logged out.',
+          'success'
+        );
+        
+        navigate('/login');
+      } catch (err) {
+        console.error('Logout error:', err);
+        Swal.fire(
+          'Error!',
+          'Failed to logout. Please try again.',
+          'error'
+        );
+      }
     }
   };
   
   const drawer = (
     <Box>
-      <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1,bgcolor:"GrayText" }}>
+      <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1,bgcolor:isDarkMode ?"rgb(39, 39, 39)":"GrayText" }}>
         <img src={logo} alt="ZEAL Logo" style={{ width: 34, height: 33 }} />
         <Typography variant="h6" sx={{ fontWeight: 'bold' ,color:"white"}}>
           ZEAL Travels
@@ -194,7 +213,8 @@ fetch('http://localhost:5000/api/auth/logout', {
         onChange={toggleTheme}
         size={30}
         sunColor="orange"
-        moonColor="black"
+        moonColor="#42a5f5"
+        
       />
             <IconButton color="inherit">
               <NotificationsIcon />
@@ -251,7 +271,9 @@ fetch('http://localhost:5000/api/auth/logout', {
         </Box>
        
       </Box>
-    </Box> <Footer /></>
+    </Box>
+    <Box sx={{mt:5}}><Footer  />
+      </Box> </>
   );
 };
 
